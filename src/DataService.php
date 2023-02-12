@@ -2,16 +2,21 @@
 
 namespace TheBachtiarz\Base;
 
+use TheBachtiarz\Base\Config\Services\ConfigService;
+
 class DataService
 {
     //
 
     /**
      * Constructor
+     *
+     * @param ConfigService $configService
      */
-    public function __construct()
-    {
-        // 
+    public function __construct(
+        protected ConfigService $configService
+    ) {
+        $this->configService = $configService;
     }
 
     /**
@@ -25,10 +30,10 @@ class DataService
 
         // ! App
         $registerConfig[] = [
-            'app.name' => tbbaseconfig(AppConfigInterface::CONFIG_APP_NAME),
-            'app.url' => tbbaseconfig(AppConfigInterface::CONFIG_APP_URL),
-            'app.timezone' => tbbaseconfig(AppConfigInterface::CONFIG_APP_TIMEZONE),
-            'app.key' => tbbaseconfig(AppConfigInterface::CONFIG_APP_KEY)
+            'app.name' => $this->configService->getConfigValue(BaseConfigInterface::CONFIG_NAME . '.' . AppConfigInterface::CONFIG_APP_NAME),
+            'app.url' => $this->configService->getConfigValue(BaseConfigInterface::CONFIG_NAME . '.' . AppConfigInterface::CONFIG_APP_URL),
+            'app.timezone' => $this->configService->getConfigValue(BaseConfigInterface::CONFIG_NAME . '.' . AppConfigInterface::CONFIG_APP_TIMEZONE),
+            'app.key' => $this->configService->getConfigValue(BaseConfigInterface::CONFIG_NAME . '.' . AppConfigInterface::CONFIG_APP_KEY)
         ];
         // $_providers = config('app.providers');
         // $registerConfig[] = [
@@ -50,7 +55,7 @@ class DataService
         $registerConfig[] = [
             'cors.paths' => array_merge(
                 $_paths,
-                [tbbaseconfig('app_prefix') . '/*']
+                [$this->configService->getConfigValue(BaseConfigInterface::CONFIG_NAME . '.' . AppConfigInterface::CONFIG_APP_PREFIX) . '/*']
             )
         ];
 

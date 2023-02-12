@@ -3,10 +3,11 @@
 
 -------
 ## Requires
-- [laravel/framework](https://github.com/laravel/framework/) v^9.30
+- [laravel/framework](https://github.com/laravel/framework/) v^9.40
+- [nesbot/carbon](https://github.com/briannesbitt/Carbon/) v^2.62
 
 ## Installation
-- composer config (only if you have access)
+- composer config (collaborator access required)
 ```bash
 composer config repositories.thebachtiarz-company/laravel-base-v1 git git@github.com:thebachtiarz-company/laravel-base-v1.git
 ```
