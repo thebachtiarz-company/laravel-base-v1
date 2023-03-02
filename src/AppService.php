@@ -11,15 +11,19 @@ class AppService
      */
     public function __construct()
     {
-        // 
+        //
     }
 
     /**
      * Available command modules
-     * 
+     *
      * @var array
      */
-    public const COMMANDS = [];
+    public const COMMANDS = [
+        \TheBachtiarz\Base\App\Console\Commands\AppRefreshCommand::class,
+        \TheBachtiarz\Base\App\Console\Commands\BackupLogCommand::class,
+        \TheBachtiarz\Base\Config\Console\Commands\ConfigSynchronizeCommand::class
+    ];
 
     // ? Public Methods
     /**

@@ -77,13 +77,13 @@ return [
     'app_refresh_artisan_commands_before' => [
         [
             'command' => 'view:clear',
-            'message' => '------> Compiled views cleared!'
+            'message' => '======> Compiled views cleared!'
         ], [
             'command' => 'config:clear',
-            'message' => '------> Configuration cache cleared!'
+            'message' => '======> Configuration cache cleared!'
         ], [
             'command' => 'cache:clear',
-            'message' => '------> Application cache cleared!'
+            'message' => '======> Application cache cleared!'
         ],
     ],
 
@@ -99,7 +99,7 @@ return [
     'app_refresh_artisan_commands_after' => [
         [
             'command' => 'config:cache',
-            'message' => '------> Configuration cached successfully!'
+            'message' => '======> Configuration cached successfully!'
         ]
     ],
 
@@ -108,12 +108,12 @@ return [
     | App Refresh Cache Class
     |--------------------------------------------------------------------------
     |
-    | This option will run cache service classes when "artisan app:refresh" run
-    | make sure there is a method named "process" inside the class
+    | This option will run cache service classes when "artisan thebachtiarz:base:app:refresh" run
+    | make sure there is a method named "execute" inside the class
     | otherwise will return an error message.
     |
-    | All classes must implementing interface:
-    | -> TheBachtiarz\Toolkit\Config\Interfaces\Classes\ScheduleCacheInterface;
+    | All class must "extends" following abstract class:
+    | @see \TheBachtiarz\Base\App\Libraries\Cache\AbstractCache
     |
     */
     'app_refresh_cache_classes' => [],

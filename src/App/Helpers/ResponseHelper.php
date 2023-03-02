@@ -158,7 +158,7 @@ class ResponseHelper
     {
         return [
             'start' => static::$accessStart,
-            'finish' => static::$accessFinish ?? static::setAccessFinish(date_timestamp_get(now()))::$accessFinish,
+            'finish' => static::$accessFinish ?? static::setAccessFinish(CarbonHelper::anyConvDateToTimestamp())::$accessFinish,
             'duration' => static::getAccessDuration()
         ];
     }
@@ -173,7 +173,7 @@ class ResponseHelper
         $_duration = static::$accessStart && static::$accessFinish ? (static::$accessFinish - static::$accessStart) : null;
 
         if (@$_duration >= 0 && (gettype($_duration) == 'integer')) {
-            return $_duration > 1 ? "$_duration seconds" : "$_duration second";
+            return $_duration > 1 ? "$_duration second(s)" : "$_duration second";
         }
 
         return null;
@@ -215,7 +215,7 @@ class ResponseHelper
      */
     public static function setAccessStart(): static
     {
-        static::$accessStart = date_timestamp_get(now());
+        static::$accessStart = CarbonHelper::anyConvDateToTimestamp();
 
         return new static;
     }
@@ -227,19 +227,19 @@ class ResponseHelper
      */
     public static function setAccessFinish(): static
     {
-        static::$accessFinish = date_timestamp_get(now());
+        static::$accessFinish = CarbonHelper::anyConvDateToTimestamp();
 
         return new static;
     }
 
     /**
-     * Set result service
+     * Set response data
      *
      * @param string $message default: ''
      * @param mixed $data default: null
      * @return static
      */
-    public static function setResultService(string $message = '', mixed $data = null): static
+    public static function setResponseData(string $message = '', mixed $data = null): static
     {
         static::$message = $message;
         static::$data = $data;

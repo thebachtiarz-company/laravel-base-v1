@@ -2,6 +2,7 @@
 
 namespace TheBachtiarz\Base\Config\Repositories;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use TheBachtiarz\Base\App\Repositories\AbstractRepository;
 use TheBachtiarz\Base\Config\Interfaces\ConfigInterface;
@@ -49,8 +50,8 @@ class ConfigRepository extends AbstractRepository
      */
     public function create(ConfigInterface $configInterface): ConfigInterface
     {
-        /** @var Config $configInterface */
-        /** @var Config $_create */
+        /** @var Model $configInterface */
+        /** @var ConfigInterface $_create */
         $_create = $this->createFromModel($configInterface);
 
         if (!$_create) throw new ModelNotFoundException("Failed to create new config");
@@ -66,7 +67,7 @@ class ConfigRepository extends AbstractRepository
      */
     public function save(ConfigInterface $configInterface): ConfigInterface
     {
-        /** @var Config $configInterface */
+        /** @var Model|ConfigInterface $configInterface */
         $_config = $configInterface->save();
 
         if (!$_config) throw new ModelNotFoundException("Failed to savecurrent config");
@@ -82,7 +83,7 @@ class ConfigRepository extends AbstractRepository
      */
     public function deleteById(int $id): bool
     {
-        /** @var Config $_config */
+        /** @var Model|ConfigInterface $_config */
         $_config = $this->getById($id);
 
         return $_config->delete();
@@ -96,7 +97,7 @@ class ConfigRepository extends AbstractRepository
      */
     public function deleteByPath(string $path): bool
     {
-        /** @var Config $_config */
+        /** @var Model $_config */
         $_config = $this->getByPath($path);
 
         return $_config->delete();

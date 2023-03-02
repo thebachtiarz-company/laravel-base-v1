@@ -2,6 +2,7 @@
 
 namespace TheBachtiarz\Base\Config\Services;
 
+use Illuminate\Support\Facades\Crypt;
 use TheBachtiarz\Base\App\Services\AbstractService;
 use TheBachtiarz\Base\Config\Interfaces\ConfigInterface;
 use TheBachtiarz\Base\Config\Models\Config;
@@ -37,23 +38,33 @@ class ConfigService extends AbstractService
 
         try {
             $_config = $this->configRepository->getByPath($path);
+
+            goto RESULT;
         } catch (\Throwable $th) {
             $_errorMessage = $th->getMessage();
         }
 
         try {
             $_config->setPath($path)->setValue(config($path));
+
+            goto RESULT;
         } catch (\Throwable $th) {
             $_errorMessage = $th->getMessage();
         }
+
+        RESULT:
 
         try {
             $_result = $_config->getValue();
+
+            if ($_config->getIsEncrypt()) {
+                $_result = Crypt::decrypt($_result);
+            }
         } catch (\Throwable $th) {
             $_errorMessage = $th->getMessage();
         }
 
-        static::$responseHelper::setResultService($_errorMessage ?? 'Config value', $_result);
+        $this->setResponseData($_errorMessage ?? 'Config value', $_result);
 
         return $_result;
     }
@@ -84,15 +95,21 @@ class ConfigService extends AbstractService
             $value = json_encode($value);
         }
 
-        $_config->setValue($value);
-
         if (@$isEncrypt) {
-            $_config->setIsEncrypt($isEncrypt === '1');
+            $_encryptRequire = $isEncrypt === '1';
+
+            $_config->setIsEncrypt($_encryptRequire);
+
+            if ($_encryptRequire) {
+                $value = Crypt::encrypt($value);
+            }
         }
+
+        $_config->setValue($value);
 
         $_config = $this->configRepository->{$_actionMethod}($_config);
 
-        static::$responseHelper::setResultService(
+        $this->setResponseData(
             sprintf('Successfully %s config', $_actionMethod === 'create' ? 'create new' : 'update'),
             $_config
         );
@@ -126,10 +143,7 @@ class ConfigService extends AbstractService
         $_result = false;
 
         try {
-            $_baseConfigName = \TheBachtiarz\Base\BaseConfigInterface::CONFIG_NAME;
-            $_baseConfigRegistered = \TheBachtiarz\Base\BaseConfigInterface::CONFIG_REGISTERED;
-
-            $_configRegistered = $this->getConfigValue("$_baseConfigName.$_baseConfigRegistered");
+            $_configRegistered = tbbaseconfig(\TheBachtiarz\Base\BaseConfigInterface::CONFIG_REGISTERED);
 
             foreach ($_configRegistered ?? [] as $key => $configRegisterName) {
                 foreach (array_keys(config($configRegisterName)) ?? [] as $key => $configPath) {
@@ -148,10 +162,16 @@ class ConfigService extends AbstractService
                 }
             }
 
+            $this->createOrUpdate(
+                \TheBachtiarz\Base\BaseConfigInterface::CONFIG_NAME . '.' . \TheBachtiarz\Base\BaseConfigInterface::CONFIG_REGISTERED,
+                $_configRegistered
+            );
+
             $_result = true;
         } catch (\Throwable $th) {
+            $this->log($th);
         } finally {
-            static::$responseHelper::setResultService(sprintf('%s synchronize new config', $_result ? 'Successfully' : 'Failed to'), []);
+            $this->setResponseData(sprintf('%s synchronize new config', $_result ? 'Successfully' : 'Failed to'), []);
 
             return $_result;
         }
