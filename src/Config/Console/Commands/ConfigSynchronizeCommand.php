@@ -3,6 +3,8 @@
 namespace TheBachtiarz\Base\Config\Console\Commands;
 
 use Illuminate\Console\Command;
+use TheBachtiarz\Base\App\Helpers\CommandHelper;
+use TheBachtiarz\Base\App\Libraries\Log\LogLibrary;
 use TheBachtiarz\Base\Config\Services\ConfigService;
 
 class ConfigSynchronizeCommand extends Command
@@ -25,12 +27,18 @@ class ConfigSynchronizeCommand extends Command
      * {@inheritDoc}
      *
      * @param ConfigService $configService
+     * @param CommandHelper $commandHelper
+     * @param LogLibrary $logLibrary
      */
     public function __construct(
-        protected ConfigService $configService
+        protected ConfigService $configService,
+        protected CommandHelper $commandHelper,
+        protected LogLibrary $logLibrary
     ) {
         parent::__construct();
         $this->configService = $configService;
+        $this->commandHelper = $commandHelper;
+        $this->logLibrary = $logLibrary;
     }
 
     /**
@@ -40,16 +48,20 @@ class ConfigSynchronizeCommand extends Command
      */
     public function handle()
     {
-        $this->info('------> Config Sync Starting');
+        $this->logLibrary->log('======> Apps config synchronize, starting...');
+        $this->info('======> Apps config synchronize, starting...');
 
-        $_syncProcess = $this->configService->synchronizeConfig();
+        /**
+         * Execute synchronize config process
+         */
+        $syncProcess = $this->configService->synchronizeConfig();
+        $messageProcess = sprintf('======> %s synchronize config', $syncProcess ? 'Successfully' : 'Failed to');
+        $this->logLibrary->log($messageProcess);
+        $this->{$syncProcess ? 'info' : 'error'}($messageProcess);
 
-        $_messageProcess = sprintf('------> %s synchronize config', $_syncProcess ? 'Successfully' : 'Failed to');
+        $this->logLibrary->log('======> Synchorizing apps config finish');
+        $this->info('======> Synchorizing apps config finish');
 
-        $this->{$_syncProcess ? 'info' : 'error'}($_messageProcess);
-
-        $this->info('------> Config Sync Finish');
-
-        return $_syncProcess ? Command::SUCCESS : Command::FAILURE;
+        return $syncProcess ? Command::SUCCESS : Command::FAILURE;
     }
 }

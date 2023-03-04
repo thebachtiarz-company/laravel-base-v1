@@ -22,11 +22,15 @@ class ConfigController extends AbstractController
         $this->configService = $configService;
     }
 
+    /**
+     * Create dummy config
+     *
+     * @return JsonResponse
+     */
     public function create(): JsonResponse
     {
-        // $this->configService->createOrUpdate('alpha.beta.charlie', 'GYGyuYUFyufytfygeguih56734gffsdvf3ygfs7dfdf67ds67d7Fft67dfggj');
-        $this->configService->getConfigValue('thebachtiarz_base.app_key');
+        $this->configService->createOrUpdate('alpha.beta.charlie', 'value to test', '1');
 
-        return static::$responseHelper::getJsonResult();
+        return $this->getResult();
     }
 }
