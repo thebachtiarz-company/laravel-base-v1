@@ -3,7 +3,7 @@
 
 -------
 ## Requires
-- [laravel/framework](https://github.com/laravel/framework/) v^9.40
+- [laravel/framework](https://github.com/laravel/framework/) v^9.40 | v^10.0
 - [nesbot/carbon](https://github.com/briannesbitt/Carbon/) v^2.62
 
 ## Installation
