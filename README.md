@@ -27,6 +27,11 @@ php artisan vendor:publish --provider="TheBachtiarz\Base\ServiceProvider"
 php artisan migrate
 ```
 
+- application refresh
+``` bash
+php artisan thebachtiarz:base:app:refresh
+```
+
 -------
 ## Feature
 
