@@ -22,27 +22,26 @@ abstract class AbstractService
      *
      * @param string $message
      * @param mixed $data
+     * @param boolean $force
      * @return void
      */
-    final protected function setResponseData(string $message = '', mixed $data = null): void
+    final protected function setResponseData(string $message = '', mixed $data = null, bool $force = false): void
     {
-        static::$responseHelper::setResponseData($message, $data);
+        static::$responseHelper::setResponseData(message: $message, data: $data, force: $force);
     }
 
     /**
      * Create logger
      *
      * @param mixed $log
-     * @param string|null $channel
+     * @param string|null $channel Default: developer
      * @return void
      */
-    final protected function log(mixed $log, ?string $channel = null): void
+    final protected function log(mixed $log, ?string $channel = 'developer'): void
     {
-        $container = Container::getInstance();
-
         /** @var LogLibrary @logLibrary */
-        $logLibrary = $container->make(LogLibrary::class);
+        $logLibrary = Container::getInstance()->make(LogLibrary::class);
 
-        $logLibrary->log($log, $channel);
+        $logLibrary->log(logEntity: $log, channel: $channel);
     }
 }

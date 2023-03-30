@@ -235,14 +235,22 @@ class ResponseHelper
     /**
      * Set response data
      *
-     * @param string $message default: ''
-     * @param mixed $data default: null
+     * @param string $message Default: ''
+     * @param mixed $data Default: null
+     * @param boolean $force Force to set values of response -- Default: false
      * @return static
      */
-    public static function setResponseData(string $message = '', mixed $data = null): static
+    public static function setResponseData(string $message = '', mixed $data = null, bool $force = false): static
     {
-        static::$message = $message;
-        static::$data = $data;
+        if ($force) {
+            static::$message = $message;
+            static::$data = $data;
+        }
+
+        if (!mb_strlen(static::$message)) {
+            static::$message = $message;
+            static::$data = $data;
+        }
 
         return new static;
     }
