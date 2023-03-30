@@ -147,6 +147,7 @@ class ConfigService extends AbstractService
 
             foreach ($_configRegistered ?? [] as $key => $configRegisterName) {
                 foreach (array_keys(config($configRegisterName)) ?? [] as $key => $configPath) {
+                    /** @var ConfigInterface $_config */
                     $_config = new Config;
 
                     try {
@@ -154,9 +155,13 @@ class ConfigService extends AbstractService
                     } catch (\Throwable $th) {
                     }
 
-                    if ($_config->getId()) continue;
-
                     $_configValue = $this->getConfigValue("$configRegisterName.$configPath");
+
+                    if ($_config->getId()) {
+                        config(["$configRegisterName.$configPath" => $_configValue]);
+
+                        continue;
+                    }
 
                     $this->createOrUpdate(path: "$configRegisterName.$configPath", value: $_configValue);
                 }
