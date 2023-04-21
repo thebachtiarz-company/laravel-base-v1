@@ -18,16 +18,34 @@ abstract class AbstractService
     protected static $responseHelper = ResponseHelper::class;
 
     /**
+     * Set Response result
+     *
+     * @var boolean
+     */
+    protected bool $responseResult = true;
+
+    /**
      * Set service result response
      *
-     * @param string $message
-     * @param mixed $data
-     * @param boolean $force
+     * @param string $message Default: ''
+     * @param mixed $data Default: null
+     * @param boolean $force Default: true
+     * @param string $status Default: success
+     * @param integer $httpCode Default: 200
      * @return void
      */
-    final protected function setResponseData(string $message = '', mixed $data = null, bool $force = false): void
-    {
-        static::$responseHelper::setResponseData(message: $message, data: $data, force: $force);
+    final protected function setResponseData(
+        string $message = '',
+        mixed $data = null,
+        bool $force = true,
+        string $status = 'success',
+        int $httpCode = 200
+    ): void {
+        if ($this->responseResult) {
+            static::$responseHelper::setResponseData(message: $message, data: $data, force: $force)
+                ->setStatus($status)
+                ->setHttpCode($httpCode);
+        }
     }
 
     /**
@@ -43,5 +61,18 @@ abstract class AbstractService
         $logLibrary = Container::getInstance()->make(LogLibrary::class);
 
         $logLibrary->log(logEntity: $log, channel: $channel);
+    }
+
+    // ? Setter Modules
+    /**
+     * Hide response result
+     *
+     * @return static
+     */
+    public function hideResponseResult(): static
+    {
+        $this->responseResult = false;
+
+        return $this;
     }
 }

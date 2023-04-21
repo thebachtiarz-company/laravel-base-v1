@@ -50,6 +50,8 @@ if (!function_exists('tbconfigvalue')) {
         /** @var \TheBachtiarz\Base\Config\Services\ConfigService $configService  */
         $configService = $container->make(\TheBachtiarz\Base\Config\Services\ConfigService::class);
 
+        $configService->hideResponseResult();
+
         if ($setValue) {
             $configService->createOrUpdate($configPath, $setValue);
         }
