@@ -7,40 +7,67 @@ class StringHelper
     //
 
     /**
+     * Create shuffle from string and number
+     *
+     * @param integer $length
+     * @return string
+     */
+    public static function shuffleBoth(int $length): string
+    {
+        $chars = self::shuffleString(100, true) . self::shuffleNumber(100);
+
+        $shuffleChars = str_shuffle($chars);
+        $charsLength = mb_strlen($shuffleChars);
+
+        $result = '';
+        for ($i = 0; $i < $length; $i++) $result .= $shuffleChars[random_int(0, ($charsLength - 1))];
+
+        return $result;
+    }
+
+    /**
      * Create shuffle string.
-     * 
+     *
      * Default: Upper Case Only
      *
-     * @param integer $count
+     * @param integer $length
      * @param boolean $withLowerCase Set true for include lower case characters
      * @return string
      */
-    public static function shuffleString(int $count, bool $withLowerCase = false): string
+    public static function shuffleString(int $length, bool $withLowerCase = false): string
     {
-        $theStr = "QWEASDZXCRTYFGHVBNUIOJKLMP";
+        $chars = "QWEASDZXCRTYFGHVBNUIOJKLMP";
 
         if ($withLowerCase)
-            $theStr .= "qweasdzxcrtyfghvbnuiojklmp";
+            $chars .= "qweasdzxcrtyfghvbnuiojklmp";
 
-        $getStr = str_shuffle($theStr);
+        $shuffleChars = str_shuffle($chars);
+        $charsLength = mb_strlen($shuffleChars);
 
-        return substr($getStr, 0, $count);
+        $result = '';
+        for ($i = 0; $i < $length; $i++) $result .= $shuffleChars[random_int(0, ($charsLength - 1))];
+
+        return $result;
     }
 
     /**
      * Create shuffle number.
-     * 
+     *
      * Length: 1 - 10 Digit(s).
      *
-     * @param integer $count
+     * @param integer $length
      * @return string
      */
-    public static function shuffleNumber(int $count): string
+    public static function shuffleNumber(int $length): string
     {
-        $theNum = (string) mt_rand(1000000000, 9999999999);
+        $chars = (string) mt_rand(1000000000, 9999999999);
 
-        $getNUm = str_shuffle($theNum);
+        $shuffleChars = str_shuffle($chars);
+        $charsLength = mb_strlen($shuffleChars);
 
-        return substr($getNUm, 0, $count);
+        $result = '';
+        for ($i = 0; $i < $length; $i++) $result .= $shuffleChars[random_int(0, ($charsLength - 1))];
+
+        return $result;
     }
 }

@@ -49,6 +49,22 @@ abstract class AbstractService
     }
 
     /**
+     * Generate service result response
+     *
+     * @param boolean $status
+     * @param string $message
+     * @param mixed $data
+     * @return array
+     */
+    final protected function serviceResult(
+        bool $status = false,
+        string $message = '',
+        mixed $data = null
+    ): array {
+        return compact('status', 'message', 'data');
+    }
+
+    /**
      * Create logger
      *
      * @param mixed $log
