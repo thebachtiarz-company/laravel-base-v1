@@ -144,7 +144,7 @@ class ResponseHelper
             'message' => static::$message,
             'access_time' => static::getAccessTime(),
             'data' => static::$asPaginate
-                ? static::getPaginateResult(static::$data, static::$perPage, static::$currentPage)
+                ? static::getPaginateResult(static::$data ?? [], static::$perPage, static::$currentPage)
                 : static::$data
         ];
     }
