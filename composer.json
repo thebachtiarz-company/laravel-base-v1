@@ -4,11 +4,11 @@
     "type": "library",
     "require": {
         "php": "^8.1",
-        "laravel/framework": "^9.40|^10.1",
+        "laravel/framework": "^10.1",
         "nesbot/carbon": "^2.62"
     },
     "license": "MIT",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "autoload": {
         "psr-4": {
             "TheBachtiarz\\Base\\": "src/"
