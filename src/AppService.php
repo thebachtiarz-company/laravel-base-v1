@@ -45,12 +45,10 @@ class AppService
      */
     private function setConfigs(): void
     {
-        $container = \Illuminate\Container\Container::getInstance();
+        /** @var DataService $dataService */
+        $dataService = app()->make(DataService::class);
 
-        /** @var DataService $_dataService */
-        $_dataService = $container->make(DataService::class);
-
-        foreach ($_dataService->registerConfig() as $key => $register)
+        foreach ($dataService->registerConfig() as $key => $register)
             config($register);
     }
 

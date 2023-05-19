@@ -13,10 +13,8 @@ class ServiceProvider extends LaravelServiceProvider
      */
     public function register()
     {
-        $container = \Illuminate\Container\Container::getInstance();
-
         /** @var AppService $_appService */
-        $_appService = $container->make(AppService::class);
+        $_appService = $this->app->make(AppService::class);
 
         $_appService->registerConfig();
 
@@ -32,12 +30,12 @@ class ServiceProvider extends LaravelServiceProvider
      */
     public function boot(): void
     {
-        if (app()->runningInConsole()) {
+        if ($this->app->runningInConsole()) {
             $_configName = BaseConfigInterface::CONFIG_NAME;
             $_publishName = 'thebachtiarz-base';
 
-            $this->publishes([__DIR__ . "/../config/$_configName.php" => config_path("$_configName.php"),], "$_publishName-config");
-            $this->publishes([__DIR__ . '/../database/migrations' => database_path('migrations'),], "$_publishName-migrations");
+            $this->publishes([__DIR__ . "/../config/$_configName.php" => config_path("$_configName.php")], "$_publishName-config");
+            $this->publishes([__DIR__ . '/../database/migrations' => database_path('migrations')], "$_publishName-migrations");
         }
     }
 }

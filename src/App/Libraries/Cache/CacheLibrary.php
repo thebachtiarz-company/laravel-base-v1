@@ -2,7 +2,6 @@
 
 namespace TheBachtiarz\Base\App\Libraries\Cache;
 
-use Illuminate\Container\Container;
 use TheBachtiarz\Base\App\Libraries\Log\LogLibrary;
 
 class CacheLibrary
@@ -25,7 +24,7 @@ class CacheLibrary
             foreach ($moduleCaches ?? [] as $key => $module) {
                 if (new $module instanceof CacheInterface) {
                     /** @var CacheInterface $cacheClass */
-                    $cacheClass = Container::getInstance()->make($module);
+                    $cacheClass = app()->make($module);
                     $cacheClass->execute();
                 }
             }
@@ -46,9 +45,7 @@ class CacheLibrary
      */
     protected function logInstance(): LogLibrary
     {
-        $container = Container::getInstance();
-
-        return $container->make(LogLibrary::class);
+        return app()->make(LogLibrary::class);
     }
 
     // ? Private Methods

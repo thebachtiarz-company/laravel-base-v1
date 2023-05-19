@@ -8,7 +8,7 @@
         "nesbot/carbon": "^2.62"
     },
     "license": "MIT",
-    "version": "1.0.10",
+    "version": "1.0.11",
     "autoload": {
         "psr-4": {
             "TheBachtiarz\\Base\\": "src/"

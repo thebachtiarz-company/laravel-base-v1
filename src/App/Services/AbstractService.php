@@ -2,7 +2,6 @@
 
 namespace TheBachtiarz\Base\App\Services;
 
-use Illuminate\Container\Container;
 use TheBachtiarz\Base\App\Helpers\ResponseHelper;
 use TheBachtiarz\Base\App\Libraries\Log\LogLibrary;
 
@@ -74,7 +73,7 @@ abstract class AbstractService
     final protected function log(mixed $log, ?string $channel = 'developer'): void
     {
         /** @var LogLibrary @logLibrary */
-        $logLibrary = Container::getInstance()->make(LogLibrary::class);
+        $logLibrary = app()->make(LogLibrary::class);
 
         $logLibrary->log(logEntity: $log, channel: $channel);
     }

@@ -2,7 +2,6 @@
 
 namespace TheBachtiarz\Base\App\Libraries\Curl;
 
-use Illuminate\Container\Container;
 use TheBachtiarz\Base\App\Libraries\Curl\Data\CurlResponseInterface;
 
 class CurlLibrary
@@ -26,10 +25,8 @@ class CurlLibrary
      */
     public function execute(string $path, array $data = []): CurlResponseInterface
     {
-        $container = Container::getInstance();
-
         /** @var CurlInterface $curlInterface */
-        $curlInterface = $container->make($this->classEntityResolver($path));
+        $curlInterface = app()->make($this->classEntityResolver($path));
 
         return $curlInterface->execute($data);
     }

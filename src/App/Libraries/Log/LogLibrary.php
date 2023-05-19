@@ -2,8 +2,6 @@
 
 namespace TheBachtiarz\Base\App\Libraries\Log;
 
-use Illuminate\Container\Container;
-
 class LogLibrary
 {
     //
@@ -32,10 +30,8 @@ class LogLibrary
         $_logClass = @$this->logClassEntity[$this->defineEntityType($logEntity)];
 
         if ($_logClass) {
-            $container = Container::getInstance();
-
             /** @var AbstractLog $abstractLog */
-            $abstractLog = $container->make($_logClass);
+            $abstractLog = app()->make($_logClass);
 
             if ($channel) $abstractLog->setChannel($channel);
 

@@ -2,7 +2,6 @@
 
 namespace TheBachtiarz\Base\App\Libraries\Curl;
 
-use Illuminate\Container\Container;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http as CURL;
@@ -128,7 +127,7 @@ abstract class AbstractCurl implements CurlInterface
      */
     protected function logInstance(): LogLibrary
     {
-        return Container::getInstance()->make(LogLibrary::class);
+        return app()->make(LogLibrary::class);
     }
 
     // ? Private Methods
