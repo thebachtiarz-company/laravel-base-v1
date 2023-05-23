@@ -19,13 +19,17 @@ class AppRefreshCommand extends Command
 {
     /**
      * The name and signature of the console command.
+     *
+     * @var string
      */
-    protected string $signature = 'thebachtiarz:base:app:refresh';
+    protected $signature = 'thebachtiarz:base:app:refresh';
 
     /**
      * The console command description.
+     *
+     * @var string
      */
-    protected string $description = 'Refresh the app for clean all cache etc.';
+    protected $description = 'Refresh the app for clean all cache etc.';
 
     /**
      * Constructor

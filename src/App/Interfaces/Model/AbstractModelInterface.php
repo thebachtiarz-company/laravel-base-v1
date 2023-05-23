@@ -59,12 +59,12 @@ interface AbstractModelInterface
      *
      * @return static
      */
-    public function setCreatedAt(string $createdAt): static;
+    public function setCreatedAt(string $createdAt);
 
     /**
      * Set updated at
      *
      * @return static
      */
-    public function setUpdatedAt(string $updatedAt): static;
+    public function setUpdatedAt(string $updatedAt);
 }

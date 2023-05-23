@@ -15,13 +15,17 @@ class ConfigSynchronizeCommand extends Command
 {
     /**
      * The name and signature of the console command.
+     *
+     * @var string
      */
-    protected string $signature = 'thebachtiarz:base:config:sync';
+    protected $signature = 'thebachtiarz:base:config:sync';
 
     /**
      * The console command description.
+     *
+     * @var string
      */
-    protected string $description = 'Synchronize All Config Into Database';
+    protected $description = 'Synchronize All Config Into Database';
 
     /**
      * {@inheritDoc}

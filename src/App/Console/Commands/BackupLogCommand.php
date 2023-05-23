@@ -20,13 +20,17 @@ class BackupLogCommand extends Command
 {
     /**
      * The name and signature of the console command.
+     *
+     * @var string
      */
-    protected string $signature = 'thebachtiarz:base:backup:log';
+    protected $signature = 'thebachtiarz:base:backup:log';
 
     /**
      * The console command description.
+     *
+     * @var string
      */
-    protected string $description = 'Backup application logger files';
+    protected $description = 'Backup application logger files';
 
     /**
      * Constructor

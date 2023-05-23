@@ -14,8 +14,10 @@ abstract class AbstractService
 {
     /**
      * Response Helper
+     *
+     * @var ResponseHelper
      */
-    protected static ResponseHelper $responseHelper = ResponseHelper::class;
+    protected static $responseHelper = ResponseHelper::class;
 
     /**
      * Set Response result

@@ -6,6 +6,7 @@ namespace TheBachtiarz\Base\App\Helpers;
 
 use Illuminate\Http\JsonResponse;
 use TheBachtiarz\Base\App\Traits\Helper\PaginatorTrait;
+use Throwable;
 
 use function gettype;
 use function mb_strlen;
@@ -27,17 +28,17 @@ class ResponseHelper
     /**
      * Access start
      */
-    protected static int|null $accessStart = null;
+    protected static mixed $accessStart = null;
 
     /**
      * Access finish
      */
-    protected static int|null $accessFinish = null;
+    protected static mixed $accessFinish = null;
 
     /**
      * Access duration
      */
-    protected static int|null $accessDuration = null;
+    protected static mixed $accessDuration = null;
 
     /**
      * Message service
@@ -106,7 +107,7 @@ class ResponseHelper
         static::$perPage     = $perPage;
         static::$currentPage = $currentPage;
 
-        if (mb_strlen($sortAttribute)) {
+        if (mb_strlen($sortAttribute ?? '') > 0) {
             static::addPaginateSort($sortAttribute ?? '', $sortType ?? 'ASC');
         }
 
@@ -127,9 +128,7 @@ class ResponseHelper
             'http_code' => static::$httpCode,
             'message' => static::$message,
             'access_time' => static::getAccessTime(),
-            'data' => static::$asPaginate
-                ? static::getPaginateResult(static::$data ?? [], static::$perPage, static::$currentPage)
-                : static::$data,
+            'data' => static::getDataResolver(),
         ];
     }
 
@@ -159,6 +158,24 @@ class ResponseHelper
         }
 
         return null;
+    }
+
+    /**
+     * Get data resolver
+     *
+     * @return array
+     */
+    private static function getDataResolver(): array
+    {
+        try {
+            if (static::$asPaginate) {
+                return static::getPaginateResult(static::$data ?? [], static::$perPage, static::$currentPage);
+            }
+
+            return static::$data;
+        } catch (Throwable) {
+            return static::$data;
+        }
     }
 
     // ? Getter Modules
