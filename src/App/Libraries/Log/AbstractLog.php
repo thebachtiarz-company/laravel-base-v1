@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Libraries\Log;
 
 use Illuminate\Support\Facades\Log;
@@ -7,33 +9,22 @@ use Psr\Log\LoggerInterface;
 
 abstract class AbstractLog implements LogInterface
 {
-    //
-
     /**
      * Log channel
-     *
-     * @var string
      */
     protected string $channel = 'maintenance';
 
     /**
      * Log data entity
-     *
-     * @var mixed
      */
     protected mixed $logEntity = null;
 
-    // ? Public Methods
-    /**
-     * {@inheritDoc}
-     */
     abstract public function execute(): void;
 
     // ? Protected Methods
+
     /**
      * Create log interface
-     *
-     * @return LoggerInterface
      */
     protected function createLog(): LoggerInterface
     {
@@ -45,11 +36,9 @@ abstract class AbstractLog implements LogInterface
     // ? Getter Modules
 
     // ? Setter Modules
+
     /**
      * Set log channel
-     *
-     * @param string $channel
-     * @return self
      */
     public function setChannel(string $channel): self
     {
@@ -60,9 +49,6 @@ abstract class AbstractLog implements LogInterface
 
     /**
      * Set log entity
-     *
-     * @param mixed $logEntity
-     * @return self
      */
     public function setLogEntity(mixed $logEntity): self
     {

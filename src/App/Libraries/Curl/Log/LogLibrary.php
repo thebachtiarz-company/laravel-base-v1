@@ -1,17 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Libraries\Curl\Log;
 
 use TheBachtiarz\Base\App\Libraries\Log\LogLibrary as BaseLogLibrary;
 
 class LogLibrary extends BaseLogLibrary
 {
-    //
-
     /**
      * Override
-     *
-     * @var boolean
      */
     protected bool $override = false;
 
@@ -20,12 +18,9 @@ class LogLibrary extends BaseLogLibrary
      */
     public function __construct()
     {
-        $this->logClassEntity['curl'] = \TheBachtiarz\Base\App\Libraries\Curl\Log\LogCurl::class;
+        $this->logClassEntity['curl'] = LogCurl::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function defineEntityType(mixed $logEntity): string
     {
         return $this->override ? 'curl' : parent::defineEntityType($logEntity);
@@ -33,9 +28,6 @@ class LogLibrary extends BaseLogLibrary
 
     /**
      * Mark as override
-     *
-     * @param boolean $override
-     * @return self
      */
     public function override(bool $override = true): self
     {

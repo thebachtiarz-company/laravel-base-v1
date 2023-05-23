@@ -1,17 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Libraries\Cache;
+
+use Illuminate\Support\Facades\Log;
 
 class CacheTest extends AbstractCache implements CacheInterface
 {
-    //
-
-    /**
-     * {@inheritDoc}
-     */
     public function execute(): bool
     {
-        \Illuminate\Support\Facades\Log::channel('maintenance')->debug('CACHE OK');
+        Log::channel('maintenance')->debug('CACHE OK');
 
         return true;
     }

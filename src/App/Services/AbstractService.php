@@ -1,64 +1,61 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Services;
 
 use TheBachtiarz\Base\App\Helpers\ResponseHelper;
 use TheBachtiarz\Base\App\Libraries\Log\LogLibrary;
 
+use function app;
+use function compact;
+
 abstract class AbstractService
 {
-    //
-
     /**
      * Response Helper
-     *
-     * @var ResponseHelper
      */
-    protected static $responseHelper = ResponseHelper::class;
+    protected static ResponseHelper $responseHelper = ResponseHelper::class;
 
     /**
      * Set Response result
-     *
-     * @var boolean
      */
     protected bool $responseResult = true;
 
     /**
      * Set service result response
      *
-     * @param string $message Default: ''
-     * @param mixed $data Default: null
-     * @param boolean $force Default: true
-     * @param string $status Default: success
-     * @param integer $httpCode Default: 200
-     * @return void
+     * @param string $message  Default: ''
+     * @param mixed  $data     Default: null
+     * @param bool   $force    Default: true
+     * @param string $status   Default: success
+     * @param int    $httpCode Default: 200
      */
     final protected function setResponseData(
         string $message = '',
         mixed $data = null,
         bool $force = true,
         string $status = 'success',
-        int $httpCode = 200
+        int $httpCode = 200,
     ): void {
-        if ($this->responseResult) {
-            static::$responseHelper::setResponseData(message: $message, data: $data, force: $force)
-                ->setStatus($status)
-                ->setHttpCode($httpCode);
+        if (! $this->responseResult) {
+            return;
         }
+
+        static::$responseHelper::setResponseData(message: $message, data: $data, force: $force)
+            ->setStatus($status)
+            ->setHttpCode($httpCode);
     }
 
     /**
      * Generate service result response
      *
-     * @param boolean $status
-     * @param string $message
-     * @param mixed $data
      * @return array
      */
     final protected function serviceResult(
         bool $status = false,
         string $message = '',
-        mixed $data = null
+        mixed $data = null,
     ): array {
         return compact('status', 'message', 'data');
     }
@@ -66,11 +63,9 @@ abstract class AbstractService
     /**
      * Create logger
      *
-     * @param mixed $log
      * @param string|null $channel Default: developer
-     * @return void
      */
-    final protected function log(mixed $log, ?string $channel = 'developer'): void
+    final protected function log(mixed $log, string|null $channel = 'developer'): void
     {
         /** @var LogLibrary @logLibrary */
         $logLibrary = app()->make(LogLibrary::class);
@@ -79,6 +74,7 @@ abstract class AbstractService
     }
 
     // ? Setter Modules
+
     /**
      * Hide response result
      *

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\Config\Traits\Model;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -11,14 +13,8 @@ use TheBachtiarz\Base\Config\Interfaces\ConfigInterface;
  */
 trait ConfigScopeTrait
 {
-    //
-
     /**
      * Get by path
-     *
-     * @param Builder $builder
-     * @param string $path
-     * @return Builder
      */
     public function scopeGetByPath(Builder $builder, string $path): Builder
     {

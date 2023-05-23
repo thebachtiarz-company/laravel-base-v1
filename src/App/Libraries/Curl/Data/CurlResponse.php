@@ -1,36 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Libraries\Curl\Data;
+
+use Throwable;
 
 class CurlResponse implements CurlResponseInterface
 {
-    //
-
     /**
      * Status code
-     *
-     * @var integer|null
      */
-    private ?int $code = null;
+    private int|null $code = null;
 
     /**
      * Status
-     *
-     * @var boolean
      */
     private bool $status = false;
 
     /**
      * Message
-     *
-     * @var string
      */
     private string $message = '';
 
     /**
      * Data
-     *
-     * @var mixed
      */
     private mixed $data = null;
 
@@ -48,6 +42,7 @@ class CurlResponse implements CurlResponseInterface
     }
 
     // ? Public Methods
+
     /**
      * {@inheritDoc}
      */
@@ -57,63 +52,44 @@ class CurlResponse implements CurlResponseInterface
             'code' => $this->getCode(),
             'status' => $this->getStatus(),
             'message' => $this->getMessage(),
-            'data' => $this->getData()
+            'data' => $this->getData(),
         ];
     }
 
     // ? Private Methods
 
-    // ? Getter Modules
-    /**
-     * {@inheritDoc}
-     */
-    public function getCode(): ?int
+
+    public function getCode(): int|null
     {
         return $this->code;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getStatus(): bool
     {
         return $this->status;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getMessage(): string
     {
         return $this->message;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getData(?string $attributekey = null): mixed
+    public function getData(string|null $attributekey = null): mixed
     {
         try {
             return $this->data[$attributekey];
-        } catch (\Throwable $th) {
+        } catch (Throwable) {
             return $this->data;
         }
     }
 
-    // ? Setter Modules
-    /**
-     * {@inheritDoc}
-     */
-    public function setCode(?int $code): self
+    public function setCode(int|null $code): self
     {
         $this->code = $code;
 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setStatus(bool $status): self
     {
         $this->status = $status;
@@ -121,9 +97,6 @@ class CurlResponse implements CurlResponseInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setMessage(string $message): self
     {
         $this->message = $message;
@@ -131,9 +104,6 @@ class CurlResponse implements CurlResponseInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setData(mixed $data): self
     {
         $this->data = $data;

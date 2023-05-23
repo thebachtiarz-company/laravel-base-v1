@@ -1,23 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Interfaces\Model;
 
 interface AbstractModelInterface
 {
-    //
-
-    public const ATTRIBUTE_ID = 'id';
+    public const ATTRIBUTE_ID        = 'id';
     public const ATTRIBUTE_CREATEDAT = 'created_at';
     public const ATTRIBUTE_UPDATEDAT = 'updated_at';
 
     // ? Public Methods
+
     /**
      * Get data.
      *
      * Get by attribute or return whole data.
-     *
-     * @param string $attribute
-     * @return mixed
      */
     public function getData(string $attribute): mixed;
 
@@ -26,39 +24,32 @@ interface AbstractModelInterface
      *
      * Set data using attribute and value exist.
      *
-     * @param string $attribute
-     * @param mixed $value
      * @return static
      */
     public function setData(string $attribute, mixed $value): static;
 
     // ? Getter Modules
+
     /**
      * Get id
-     *
-     * @return integer|null
      */
-    public function getId(): ?int;
+    public function getId(): int|null;
 
     /**
      * Get created at
-     *
-     * @return string|null
      */
-    public function getCreatedAt(): ?string;
+    public function getCreatedAt(): string|null;
 
     /**
      * Get updated at
-     *
-     * @return string|null
      */
-    public function getUpdatedAt(): ?string;
+    public function getUpdatedAt(): string|null;
 
     // ? Setter Modules
+
     /**
      * Set id
      *
-     * @param integer $id
      * @return static
      */
     public function setId(int $id): static;
@@ -66,16 +57,14 @@ interface AbstractModelInterface
     /**
      * Set created at
      *
-     * @param string $createdAt
      * @return static
      */
-    public function setCreatedAt($createdAt);
+    public function setCreatedAt(string $createdAt): static;
 
     /**
      * Set updated at
      *
-     * @param string $updatedAt
      * @return static
      */
-    public function setUpdatedAt($updatedAt);
+    public function setUpdatedAt(string $updatedAt): static;
 }

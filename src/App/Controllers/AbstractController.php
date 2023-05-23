@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -11,14 +13,14 @@ use TheBachtiarz\Base\App\Helpers\ResponseHelper;
 
 abstract class AbstractController extends Controller
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests;
+    use DispatchesJobs;
+    use ValidatesRequests;
 
     /**
      * Response Helper
-     *
-     * @var ResponseHelper
      */
-    protected static $responseHelper = ResponseHelper::class;
+    protected static ResponseHelper $responseHelper = ResponseHelper::class;
 
     /**
      * Constructor
@@ -38,8 +40,6 @@ abstract class AbstractController extends Controller
 
     /**
      * Get response result
-     *
-     * @return JsonResponse
      */
     protected function getResult(): JsonResponse
     {

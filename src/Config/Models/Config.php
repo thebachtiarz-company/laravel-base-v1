@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\Config\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -10,53 +12,30 @@ class Config extends Model implements ConfigInterface
 {
     use ConfigScopeTrait;
 
-    /**
-     * {@inheritDoc}
-     */
     protected $table = self::TABLE_NAME;
 
-    /**
-     * {@inheritDoc}
-     */
     protected $fillable = self::ATTRIBUTES_FILLABLE;
 
-    // ? Getter Modules
-    /**
-     * {@inheritDoc}
-     */
-    public function getId(): ?int
+    public function getId(): int|null
     {
         return $this->__get(self::ATTRIBUTE_ID);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getPath(): ?string
+    public function getPath(): string|null
     {
         return $this->__get(self::ATTRIBUTE_PATH);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getIsEncrypt(): ?bool
+    public function getIsEncrypt(): bool|null
     {
         return $this->__get(self::ATTRIBUTE_ISENCRYPT);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getValue(): mixed
     {
         return $this->__get(self::ATTRIBUTE_VALUE);
     }
 
-    // ? Setter Modules
-    /**
-     * {@inheritDoc}
-     */
     public function setId(int $id): self
     {
         $this->__set(self::ATTRIBUTE_ID, $id);
@@ -64,9 +43,6 @@ class Config extends Model implements ConfigInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setPath(string $path): self
     {
         $this->__set(self::ATTRIBUTE_PATH, $path);
@@ -74,9 +50,6 @@ class Config extends Model implements ConfigInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setIsEncrypt(bool $isEncrypt): self
     {
         $this->__set(self::ATTRIBUTE_ISENCRYPT, $isEncrypt);
@@ -84,9 +57,6 @@ class Config extends Model implements ConfigInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setValue(mixed $value): self
     {
         $this->__set(self::ATTRIBUTE_VALUE, $value);

@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Helpers;
 
 use Illuminate\Http\JsonResponse;
 use TheBachtiarz\Base\App\Traits\Helper\PaginatorTrait;
+
+use function gettype;
+use function mb_strlen;
 
 class ResponseHelper
 {
@@ -11,79 +16,58 @@ class ResponseHelper
 
     /**
      * Status response
-     *
-     * @var string
      */
     protected static string $status = 'success';
 
     /**
      * Http code response
-     *
-     * @var integer
      */
     protected static int $httpCode = 200;
 
     /**
      * Access start
-     *
-     * @var integer|null
      */
-    protected static ?int $accessStart = null;
+    protected static int|null $accessStart = null;
 
     /**
      * Access finish
-     *
-     * @var integer|null
      */
-    protected static ?int $accessFinish = null;
+    protected static int|null $accessFinish = null;
 
     /**
      * Access duration
-     *
-     * @var integer|null
      */
-    protected static ?int $accessDuration = null;
+    protected static int|null $accessDuration = null;
 
     /**
      * Message service
-     *
-     * @var string
      */
     protected static string $message = '';
 
     /**
      * Data service
-     *
-     * @var mixed
      */
     protected static mixed $data = null;
 
     /**
      * Get result as paginate
-     *
-     * @var boolean
      */
     protected static bool $asPaginate = false;
 
     /**
      * Get result per page
-     *
-     * @var integer
      */
     protected static int $perPage = 15;
 
     /**
      * Get index page result
-     *
-     * @var integer
      */
     protected static int $currentPage = 1;
 
     // ? Public Modules
+
     /**
      * Get json result
-     *
-     * @return JsonResponse
      */
     public static function getJsonResult(): JsonResponse
     {
@@ -99,38 +83,38 @@ class ResponseHelper
      */
     public static function getArrayResult(): array
     {
-        $_result = static::createResult();
-
-        return $_result;
+        return static::createResult();
     }
 
     /**
      * Get result as paginate
      *
-     * @param integer $perPage default: 15
-     * @param integer $currentPage default: 1
+     * @param int         $perPage       default: 15
+     * @param int         $currentPage   default: 1
      * @param string|null $sortAttribute default: null
-     * @param string|null $sortType default: null ['ASC', 'DESC']
+     * @param string|null $sortType      default: null ['ASC', 'DESC']
+     *
      * @return static
      */
     public static function asPaginate(
         int $perPage = 15,
         int $currentPage = 1,
-        ?string $sortAttribute = null,
-        ?string $sortType = null
+        string|null $sortAttribute = null,
+        string|null $sortType = null,
     ): static {
-        static::$asPaginate = true;
-        static::$perPage = $perPage;
+        static::$asPaginate  = true;
+        static::$perPage     = $perPage;
         static::$currentPage = $currentPage;
 
         if (mb_strlen($sortAttribute)) {
             static::addPaginateSort($sortAttribute ?? '', $sortType ?? 'ASC');
         }
 
-        return new static;
+        return new static();
     }
 
     // ? Private Modules
+
     /**
      * Create basic result
      *
@@ -145,7 +129,7 @@ class ResponseHelper
             'access_time' => static::getAccessTime(),
             'data' => static::$asPaginate
                 ? static::getPaginateResult(static::$data ?? [], static::$perPage, static::$currentPage)
-                : static::$data
+                : static::$data,
         ];
     }
 
@@ -159,20 +143,18 @@ class ResponseHelper
         return [
             'start' => static::$accessStart,
             'finish' => static::$accessFinish ?? static::setAccessFinish(CarbonHelper::anyConvDateToTimestamp())::$accessFinish,
-            'duration' => static::getAccessDuration()
+            'duration' => static::getAccessDuration(),
         ];
     }
 
     /**
      * Get access duration
-     *
-     * @return string|null
      */
-    private static function getAccessDuration(): ?string
+    private static function getAccessDuration(): string|null
     {
-        $_duration = static::$accessStart && static::$accessFinish ? (static::$accessFinish - static::$accessStart) : null;
+        $_duration = static::$accessStart && static::$accessFinish ? static::$accessFinish - static::$accessStart : null;
 
-        if (@$_duration >= 0 && (gettype($_duration) == 'integer')) {
+        if (@$_duration >= 0 && (gettype($_duration) === 'integer')) {
             return $_duration > 1 ? "$_duration second(s)" : "$_duration second";
         }
 
@@ -182,30 +164,29 @@ class ResponseHelper
     // ? Getter Modules
 
     // ? Setter Modules
+
     /**
      * Set status response
      *
-     * @param string $status
      * @return static
      */
     public static function setStatus(string $status): static
     {
         static::$status = $status;
 
-        return new static;
+        return new static();
     }
 
     /**
      * Set http code
      *
-     * @param integer $httpCode
      * @return static
      */
     public static function setHttpCode(int $httpCode): static
     {
         static::$httpCode = $httpCode;
 
-        return new static;
+        return new static();
     }
 
     /**
@@ -217,7 +198,7 @@ class ResponseHelper
     {
         static::$accessStart = CarbonHelper::anyConvDateToTimestamp();
 
-        return new static;
+        return new static();
     }
 
     /**
@@ -229,29 +210,30 @@ class ResponseHelper
     {
         static::$accessFinish = CarbonHelper::anyConvDateToTimestamp();
 
-        return new static;
+        return new static();
     }
 
     /**
      * Set response data
      *
      * @param string $message Default: ''
-     * @param mixed $data Default: null
-     * @param boolean $force Force to set values of response -- Default: true
+     * @param mixed  $data    Default: null
+     * @param bool   $force   Force to set values of response -- Default: true
+     *
      * @return static
      */
     public static function setResponseData(string $message = '', mixed $data = null, bool $force = true): static
     {
         if ($force) {
             static::$message = $message;
-            static::$data = $data;
+            static::$data    = $data;
         }
 
-        if (!mb_strlen(static::$message)) {
+        if (! mb_strlen(static::$message)) {
             static::$message = $message;
-            static::$data = $data;
+            static::$data    = $data;
         }
 
-        return new static;
+        return new static();
     }
 }

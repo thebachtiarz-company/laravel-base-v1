@@ -1,16 +1,18 @@
 <?php
 
-use TheBachtiarz\Base\BaseConfigInterface;
+declare(strict_types=1);
 
-if (!function_exists('tbbaseconfig')) {
+use TheBachtiarz\Base\BaseConfigInterface;
+use TheBachtiarz\Base\Config\Services\ConfigService;
+
+if (! function_exists('tbbaseconfig')) {
     /**
      * TheBachtiarz base config
      *
-     * @param string|null $keyName Config key name | null will return all
-     * @param boolean|null $useOrigin Use original value from config
-     * @return mixed
+     * @param string|null $keyName   Config key name | null will return all
+     * @param bool|null   $useOrigin Use original value from config
      */
-    function tbbaseconfig(?string $keyName = null, ?bool $useOrigin = true): mixed
+    function tbbaseconfig(string|null $keyName = null, bool|null $useOrigin = true): mixed
     {
         $configName = BaseConfigInterface::CONFIG_NAME;
 
@@ -18,40 +20,33 @@ if (!function_exists('tbbaseconfig')) {
     }
 }
 
-if (!function_exists('tbconfig')) {
+if (! function_exists('tbconfig')) {
     /**
      * TheBachtiarz config
-     *
-     * @param string $configName
-     * @param string|null $keyName
-     * @param boolean|null $useOrigin
-     * @return mixed
      */
-    function tbconfig(string $configName, ?string $keyName = null, ?bool $useOrigin = true): mixed
+    function tbconfig(string $configName, string|null $keyName = null, bool|null $useOrigin = true): mixed
     {
         try {
             $path = sprintf('%s%s', $configName, mb_strlen($keyName) ? ".$keyName" : null);
 
             return $useOrigin ? config($path) : tbconfigvalue($path);
-        } catch (\Throwable $th) {
+        } catch (Throwable) {
         }
 
         return null;
     }
 }
 
-if (!function_exists('tbconfigvalue')) {
+if (! function_exists('tbconfigvalue')) {
     /**
      * Get config value
      *
-     * @param string $configPath
      * @param mixed $setValue For create new/update config purpose -- default: null
-     * @return mixed
      */
     function tbconfigvalue(string $configPath, mixed $setValue = null): mixed
     {
-        /** @var \TheBachtiarz\Base\Config\Services\ConfigService $configService  */
-        $configService = app()->make(\TheBachtiarz\Base\Config\Services\ConfigService::class);
+        $configService = app()->make(ConfigService::class);
+        assert($configService instanceof ConfigService);
 
         $configService->hideResponseResult();
 
@@ -63,16 +58,13 @@ if (!function_exists('tbconfigvalue')) {
     }
 }
 
-if (!function_exists('tbdirlocation')) {
+if (! function_exists('tbdirlocation')) {
     /**
      * Check directory location
-     *
-     * @param string|null $subDir
-     * @return string
      */
-    function tbdirlocation(?string $subDir = null): string
+    function tbdirlocation(string|null $subDir = null): string
     {
-        $_subDir = $subDir ? "/{$subDir}" : "";
+        $_subDir = $subDir ? "/{$subDir}" : '';
 
         return base_path(BaseConfigInterface::DIRECTORY_PATH) . $_subDir;
     }

@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Libraries\Cache;
 
 use TheBachtiarz\Base\App\Libraries\Log\LogLibrary;
+use Throwable;
+
+use function app;
+use function assert;
+use function tbbaseconfig;
 
 class CacheLibrary
 {
-    //
-
     // ? Public Methods
+
     /**
      * Create application cache modules
-     *
-     * @return boolean
      */
     public function createCaches(): bool
     {
@@ -22,15 +26,17 @@ class CacheLibrary
             $moduleCaches = tbbaseconfig('app_refresh_cache_classes');
 
             foreach ($moduleCaches ?? [] as $key => $module) {
-                if (new $module instanceof CacheInterface) {
-                    /** @var CacheInterface $cacheClass */
-                    $cacheClass = app()->make($module);
-                    $cacheClass->execute();
+                if (! (new $module() instanceof CacheInterface)) {
+                    continue;
                 }
+
+                $cacheClass = app()->make($module);
+                assert($cacheClass instanceof CacheInterface);
+                $cacheClass->execute();
             }
 
             $result = true;
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->logInstance()->log($th);
         }
 
@@ -38,10 +44,9 @@ class CacheLibrary
     }
 
     // ? Protected Methods
+
     /**
      * Get log instance
-     *
-     * @return LogLibrary
      */
     protected function logInstance(): LogLibrary
     {

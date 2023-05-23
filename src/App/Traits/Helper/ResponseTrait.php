@@ -1,13 +1,12 @@
 <?php
 
-namespace TheBachtiarz\Base\App\Traits\Helper;
+declare(strict_types=1);
 
-use Illuminate\Http\JsonResponse;
+namespace TheBachtiarz\Base\App\Traits\Helper;
 
 /**
  * Response Trait
  */
 trait ResponseTrait
 {
-    //
 }

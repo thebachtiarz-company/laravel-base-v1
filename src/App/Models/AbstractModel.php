@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,20 +9,11 @@ use TheBachtiarz\Base\App\Interfaces\Model\AbstractModelInterface;
 
 abstract class AbstractModel extends Model implements AbstractModelInterface
 {
-    //
-
-    // ? Public Methods
-    /**
-     * {@inheritDoc}
-     */
     public function getData(string $attribute): mixed
     {
         return $this->__get($attribute);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setData(string $attribute, mixed $value): static
     {
         $this->__set($attribute, $value);
@@ -28,35 +21,21 @@ abstract class AbstractModel extends Model implements AbstractModelInterface
         return $this;
     }
 
-    // ? Getter Modules
-    /**
-     * {@inheritDoc}
-     */
-    public function getId(): ?int
+    public function getId(): int|null
     {
         return $this->__get(self::ATTRIBUTE_ID);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getCreatedAt(): ?string
+    public function getCreatedAt(): string|null
     {
         return $this->__get(self::ATTRIBUTE_CREATEDAT);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getUpdatedAt(): ?string
+    public function getUpdatedAt(): string|null
     {
         return $this->__get(self::ATTRIBUTE_UPDATEDAT);
     }
 
-    // ? Setter Modules
-    /**
-     * {@inheritDoc}
-     */
     public function setId(int $id): static
     {
         $this->__set(self::ATTRIBUTE_ID, $id);

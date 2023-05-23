@@ -1,49 +1,50 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 use TheBachtiarz\Base\App\Helpers\CommandHelper;
 use TheBachtiarz\Base\App\Libraries\Log\LogLibrary;
+use Throwable;
+
+use function date;
+use function explode;
+use function is_dir;
+use function mkdir;
+use function tbdirlocation;
 
 class BackupLogCommand extends Command
 {
     /**
      * The name and signature of the console command.
-     *
-     * @var string
      */
-    protected $signature = 'thebachtiarz:base:backup:log';
+    protected string $signature = 'thebachtiarz:base:backup:log';
 
     /**
      * The console command description.
-     *
-     * @var string
      */
-    protected $description = 'Backup application logger files';
+    protected string $description = 'Backup application logger files';
 
     /**
      * Constructor
-     *
-     * @param CommandHelper $commandHelper
-     * @param LogLibrary $logLibrary
      */
     public function __construct(
         protected CommandHelper $commandHelper,
-        protected LogLibrary $logLibrary
+        protected LogLibrary $logLibrary,
     ) {
         parent::__construct();
+
         $this->commandHelper = $commandHelper;
-        $this->logLibrary = $logLibrary;
+        $this->logLibrary    = $logLibrary;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $result = Command::INVALID;
 
@@ -60,8 +61,8 @@ class BackupLogCommand extends Command
             /**
              * Execute backup logger files
              */
-            $dirTarget = 'log';
-            $dirOutput = 'backup/log';
+            $dirTarget  = 'log';
+            $dirOutput  = 'backup/log';
             $fileOutput = 'tar_' . date('Ymd') . '_' . date('His');
             $this->createDirectory($dirOutput);
             (new Process(explode(' ', "tar -zcf $dirOutput/$fileOutput $dirTarget"), tbdirlocation()))->run();
@@ -86,7 +87,7 @@ class BackupLogCommand extends Command
             $this->info('======> Finish backup logger files');
 
             $result = Command::SUCCESS;
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->logLibrary->log($th);
 
             $result = Command::FAILURE;
@@ -99,13 +100,13 @@ class BackupLogCommand extends Command
 
     /**
      * Create directory
-     *
-     * @param string $directoryPath
-     * @return void
      */
     private function createDirectory(string $directoryPath): void
     {
-        if (!is_dir(tbdirlocation($directoryPath)))
-            mkdir(tbdirlocation($directoryPath), 0755, true);
+        if (is_dir(tbdirlocation($directoryPath))) {
+            return;
+        }
+
+        mkdir(tbdirlocation($directoryPath), 0755, true);
     }
 }

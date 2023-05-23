@@ -1,18 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Helpers;
 
+use DateInterval;
+use DateTimeInterface;
 use Illuminate\Support\Facades\Cache;
 
 class CacheHelper extends Cache
 {
-    //
-
     /**
      * Check is cache available by key
-     *
-     * @param string $cacheName
-     * @return boolean
      */
     public static function has(string $cacheName): bool
     {
@@ -21,9 +20,6 @@ class CacheHelper extends Cache
 
     /**
      * Get cache by key
-     *
-     * @param string $cacheName
-     * @return mixed
      */
     public static function get(string $cacheName): mixed
     {
@@ -32,10 +28,6 @@ class CacheHelper extends Cache
 
     /**
      * Set cache data forever
-     *
-     * @param string $cacheName
-     * @param mixed $value
-     * @return boolean
      */
     public static function set(string $cacheName, mixed $value): bool
     {
@@ -45,21 +37,15 @@ class CacheHelper extends Cache
     /**
      * Set cache data temporary with time to live
      *
-     * @param string $cacheName
-     * @param mixed $value
-     * @param \DateTimeInterface|\DateInterval|int $ttl default: 60 seconds
-     * @return boolean
+     * @param DateTimeInterface|DateInterval|int $ttl default: 60 seconds
      */
-    public static function setTemporary(string $cacheName, mixed $value, \DateTimeInterface|\DateInterval|int $ttl = 60): bool
+    public static function setTemporary(string $cacheName, mixed $value, DateTimeInterface|DateInterval|int $ttl = 60): bool
     {
         return self::put($cacheName, $value, $ttl);
     }
 
     /**
      * Delete a cache data by key
-     *
-     * @param string $cacheName
-     * @return boolean
      */
     public static function delete(string $cacheName): bool
     {
@@ -68,8 +54,6 @@ class CacheHelper extends Cache
 
     /**
      * Erase/Remove all cache data
-     *
-     * @return boolean
      */
     public static function erase(): bool
     {

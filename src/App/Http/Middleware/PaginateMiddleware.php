@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Http\Middleware;
 
 use Closure;
@@ -12,7 +14,7 @@ class PaginateMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param Closure(Request): Response $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -26,7 +28,7 @@ class PaginateMiddleware
                 perPage: $request->get('perPage') ?? 15,
                 currentPage: $request->get('currentPage') ?? 1,
                 sortAttribute: $request->get('sortAttribute') ?? null,
-                sortType: $request->get('sortType') ?? null
+                sortType: $request->get('sortType') ?? null,
             );
         }
 

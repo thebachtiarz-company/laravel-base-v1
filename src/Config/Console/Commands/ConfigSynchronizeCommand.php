@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\Config\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -7,46 +9,43 @@ use TheBachtiarz\Base\App\Helpers\CommandHelper;
 use TheBachtiarz\Base\App\Libraries\Log\LogLibrary;
 use TheBachtiarz\Base\Config\Services\ConfigService;
 
+use function sprintf;
+
 class ConfigSynchronizeCommand extends Command
 {
     /**
      * The name and signature of the console command.
-     *
-     * @var string
      */
-    protected $signature = 'thebachtiarz:base:config:sync';
+    protected string $signature = 'thebachtiarz:base:config:sync';
 
     /**
      * The console command description.
-     *
-     * @var string
      */
-    protected $description = 'Synchronize All Config Into Database';
+    protected string $description = 'Synchronize All Config Into Database';
 
     /**
      * {@inheritDoc}
      *
      * @param ConfigService $configService
      * @param CommandHelper $commandHelper
-     * @param LogLibrary $logLibrary
+     * @param LogLibrary    $logLibrary
      */
     public function __construct(
         protected ConfigService $configService,
         protected CommandHelper $commandHelper,
-        protected LogLibrary $logLibrary
+        protected LogLibrary $logLibrary,
     ) {
         parent::__construct();
+
         $this->configService = $configService;
         $this->commandHelper = $commandHelper;
-        $this->logLibrary = $logLibrary;
+        $this->logLibrary    = $logLibrary;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $this->logLibrary->log('======> Apps config synchronize, starting...');
         $this->info('======> Apps config synchronize, starting...');
@@ -54,7 +53,7 @@ class ConfigSynchronizeCommand extends Command
         /**
          * Execute synchronize config process
          */
-        $syncProcess = $this->configService->synchronizeConfig();
+        $syncProcess    = $this->configService->synchronizeConfig();
         $messageProcess = sprintf('======> %s synchronize config', $syncProcess ? 'Successfully' : 'Failed to');
         $this->logLibrary->log($messageProcess);
         $this->{$syncProcess ? 'info' : 'error'}($messageProcess);

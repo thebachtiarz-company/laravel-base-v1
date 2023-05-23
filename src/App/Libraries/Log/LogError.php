@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Libraries\Log;
+
+use Throwable;
+
+use function assert;
+use function json_encode;
 
 class LogError extends AbstractLog implements LogInterface
 {
-    //
-
-    /**
-     * {@inheritDoc}
-     */
     public function execute(): void
     {
-        /** @var \Throwable $throwable */
         $throwable = $this->logEntity;
+        assert($throwable instanceof Throwable);
 
         $_trace = $throwable->getTrace();
 

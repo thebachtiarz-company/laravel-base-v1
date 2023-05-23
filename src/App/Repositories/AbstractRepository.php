@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 
 abstract class AbstractRepository
 {
-    //
-
     /**
      * Model data
      *
@@ -17,9 +17,6 @@ abstract class AbstractRepository
 
     /**
      * Create new record from model
-     *
-     * @param Model $model
-     * @return Model
      */
     protected function createFromModel(Model $model): Model
     {
@@ -31,7 +28,6 @@ abstract class AbstractRepository
     /**
      * Prepare data create
      *
-     * @param Model $model
      * @return array
      */
     protected function prepareCreate(Model $model): array

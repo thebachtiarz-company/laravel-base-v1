@@ -1,45 +1,48 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Traits\Helper;
+
+use function ceil;
+use function count;
+use function mb_strlen;
+use function usort;
 
 /**
  * Paginator Trait
  */
 trait PaginatorTrait
 {
-    //
-
     /**
      * Items request sorting
-     *
-     * @var array|null
      */
-    private static ?array $itemsRequestSort = null;
+    private static array|null $itemsRequestSort = null;
 
     // ? Public Methods
 
     // ? Private Modules
+
     /**
      * Get paginate result
      *
      * @param array $resultData
-     * @param integer $perPage
-     * @param integer $currentPage
+     *
      * @return array
      */
     private static function getPaginateResult(
         array $resultData = [],
         int $perPage = 10,
-        int $currentPage = 1
+        int $currentPage = 1,
     ): array {
         $_result = [
             'result' => [],
             'page_info' => [
                 'per_page' => $perPage,
                 'current_page' => $currentPage,
-                'total_pages' => 1
+                'total_pages' => 1,
             ],
-            'total_count' => count($resultData)
+            'total_count' => count($resultData),
         ];
 
         /**
@@ -65,21 +68,28 @@ trait PaginatorTrait
             /**
              * Check page section
              */
-            if ($_loopCurrentPage === $currentPage) {
-                /**
-                 * Define start - finish item index
-                 */
-                $_indexStart = (($currentPage - 1) * $perPage);
-                $_indexFinish = $_result['total_count'] < ($currentPage * $perPage)
-                    ? $_result['total_count']
-                    : ($currentPage * $perPage);
+            if ($_loopCurrentPage !== $currentPage) {
+                continue;
+            }
 
-                for ($_indexItem = $_indexStart; $_indexItem < $_indexFinish; $_indexItem++) {
-                    if (($_indexItem + 1) > $_result['total_count']) break;
-                    if (count($_dataResult) >= $perPage) break;
+            /**
+             * Define start - finish item index
+             */
+            $_indexStart  = ($currentPage - 1) * $perPage;
+            $_indexFinish = $_result['total_count'] < $currentPage * $perPage
+                ? $_result['total_count']
+                : $currentPage * $perPage;
 
-                    $_dataResult[] = $resultData[$_indexItem];
+            for ($_indexItem = $_indexStart; $_indexItem < $_indexFinish; $_indexItem++) {
+                if ($_indexItem + 1 > $_result['total_count']) {
+                    break;
                 }
+
+                if (count($_dataResult) >= $perPage) {
+                    break;
+                }
+
+                $_dataResult[] = $resultData[$_indexItem];
             }
         }
 
@@ -92,34 +102,40 @@ trait PaginatorTrait
      * Sort array result
      *
      * @param array $data
-     * @param string $key
-     * @param string $sortType
+     *
      * @return array
      */
-    private static function sortArrayResult(array $data, string $key = 'name', $sortType = 'ASC'): array
+    private static function sortArrayResult(array $data, string $key = 'name', string $sortType = 'ASC'): array
     {
-        usort($data, function ($a, $b) use ($sortType, $key) {
-            if ($sortType === 'ASC') return $a[$key] <=> $b[$key];
-            if ($sortType === 'DESC') return $b[$key] <=> $a[$key];
+        usort($data, static function ($a, $b) use ($sortType, $key) {
+            if ($sortType === 'ASC') {
+                return $a[$key] <=> $b[$key];
+            }
+
+            if ($sortType === 'DESC') {
+                return $b[$key] <=> $a[$key];
+            }
         });
 
         return $data;
     }
 
     // ? Setter Modules
+
     /**
      * Add paginate sort
      *
-     * @param string $attributeName default: ''
-     * @param string|null $sortType default: 'ASC'
+     * @param string      $attributeName default: ''
+     * @param string|null $sortType      default: 'ASC'
+     *
      * @return static
      */
-    private static function addPaginateSort(string $attributeName = '', ?string $sortType = 'ASC'): static
+    private static function addPaginateSort(string $attributeName = '', string|null $sortType = 'ASC'): static
     {
         if (mb_strlen($attributeName)) {
             static::$itemsRequestSort[$attributeName] = $sortType;
         }
 
-        return new static;
+        return new static();
     }
 }

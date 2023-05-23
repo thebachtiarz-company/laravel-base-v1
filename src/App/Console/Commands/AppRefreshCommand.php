@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -8,53 +10,46 @@ use TheBachtiarz\Base\App\Helpers\CommandHelper;
 use TheBachtiarz\Base\App\Libraries\Cache\CacheLibrary;
 use TheBachtiarz\Base\App\Libraries\Log\LogLibrary;
 use TheBachtiarz\Base\Config\Services\ConfigService;
+use Throwable;
+
+use function json_decode;
+use function tbbaseconfig;
 
 class AppRefreshCommand extends Command
 {
     /**
      * The name and signature of the console command.
-     *
-     * @var string
      */
-    protected $signature = 'thebachtiarz:base:app:refresh';
+    protected string $signature = 'thebachtiarz:base:app:refresh';
 
     /**
      * The console command description.
-     *
-     * @var string
      */
-    protected $description = 'Refresh the app for clean all cache etc.';
+    protected string $description = 'Refresh the app for clean all cache etc.';
 
     /**
      * Constructor
-     *
-     * @param Composer $composer
-     * @param ConfigService $configService
-     * @param CacheLibrary $cacheLibrary
-     * @param CommandHelper $commandHelper
-     * @param LogLibrary $logLibrary
      */
     public function __construct(
         protected Composer $composer,
         protected ConfigService $configService,
         protected CacheLibrary $cacheLibrary,
         protected CommandHelper $commandHelper,
-        protected LogLibrary $logLibrary
+        protected LogLibrary $logLibrary,
     ) {
         parent::__construct();
-        $this->composer = $composer;
+
+        $this->composer      = $composer;
         $this->configService = $configService;
-        $this->cacheLibrary = $cacheLibrary;
+        $this->cacheLibrary  = $cacheLibrary;
         $this->commandHelper = $commandHelper;
-        $this->logLibrary = $logLibrary;
+        $this->logLibrary    = $logLibrary;
     }
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $result = Command::INVALID;
 
@@ -129,7 +124,7 @@ class AppRefreshCommand extends Command
             $this->info('======> Finish app refresh maintenance');
 
             $result = Command::SUCCESS;
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->logLibrary->log($th);
 
             $result = Command::FAILURE;
@@ -142,17 +137,14 @@ class AppRefreshCommand extends Command
 
     /**
      * Get stringable config
-     *
-     * @param string $path
-     * @return array|null
      */
-    private function getStringableConfig(string $path): ?array
+    private function getStringableConfig(string $path): array|null
     {
         $config = tbbaseconfig($path, false);
 
         try {
             $config = json_decode($config, true);
-        } catch (\Throwable $th) {
+        } catch (Throwable) {
         }
 
         return $config;

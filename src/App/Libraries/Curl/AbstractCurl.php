@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Libraries\Curl;
 
 use Illuminate\Http\Client\PendingRequest;
@@ -8,22 +10,25 @@ use Illuminate\Support\Facades\Http as CURL;
 use TheBachtiarz\Base\App\Libraries\Curl\Data\CurlResponse;
 use TheBachtiarz\Base\App\Libraries\Curl\Data\CurlResponseInterface;
 use TheBachtiarz\Base\App\Libraries\Curl\Log\LogLibrary;
+use Throwable;
+
+use function app;
+use function array_keys;
+use function array_merge;
+use function assert;
+use function count;
+use function in_array;
+use function throw_if;
 
 abstract class AbstractCurl implements CurlInterface
 {
-    //
-
     /**
      * Url path
-     *
-     * @var string
      */
     protected string $path = '';
 
     /**
      * Url request
-     *
-     * @var string
      */
     protected string $url = '';
 
@@ -38,17 +43,13 @@ abstract class AbstractCurl implements CurlInterface
      * Token authorization
      *
      * Type: Bearer
-     *
-     * @var string|null
      */
-    protected ?string $token = null;
+    protected string|null $token = null;
 
     /**
      * User agent
-     *
-     * @var string|null
      */
-    protected ?string $userAgent = null;
+    protected string|null $userAgent = null;
 
     /**
      * Body request
@@ -58,6 +59,7 @@ abstract class AbstractCurl implements CurlInterface
     protected array $body = [];
 
     // ? Public Methods
+
     /**
      * {@inheritDoc}
      */
@@ -65,8 +67,6 @@ abstract class AbstractCurl implements CurlInterface
 
     /**
      * Send request with method: GET
-     *
-     * @return CurlResponseInterface
      */
     public function get(): CurlResponseInterface
     {
@@ -75,8 +75,6 @@ abstract class AbstractCurl implements CurlInterface
 
     /**
      * Send request with method: POST
-     *
-     * @return CurlResponseInterface
      */
     public function post(): CurlResponseInterface
     {
@@ -84,10 +82,9 @@ abstract class AbstractCurl implements CurlInterface
     }
 
     // ? Protected Methods
+
     /**
      * Url domain resolver
-     *
-     * @return string
      */
     abstract protected function urlDomainResolver(): string;
 
@@ -100,30 +97,27 @@ abstract class AbstractCurl implements CurlInterface
 
     /**
      * Request curl send
-     *
-     * @param string $method
-     * @return CurlResponseInterface
      */
     protected function sendRequest(string $method): CurlResponseInterface
     {
         $pendingRequest = $this->curl();
 
-        if ($this->token)
+        if ($this->token) {
             $pendingRequest->withToken($this->token);
+        }
 
-        if ($this->userAgent)
+        if ($this->userAgent) {
             $pendingRequest->withUserAgent($this->userAgent);
+        }
 
-        /** @var Response $response */
         $response = $pendingRequest->{$method}($this->urlDomainResolver(), $this->bodyDataResolver());
+        assert($response instanceof Response);
 
         return $this->response($response);
     }
 
     /**
      * Get log instance
-     *
-     * @return LogLibrary
      */
     protected function logInstance(): LogLibrary
     {
@@ -131,33 +125,28 @@ abstract class AbstractCurl implements CurlInterface
     }
 
     // ? Private Methods
+
     /**
      * Request curl init
-     *
-     * @return PendingRequest
      */
     private function curl(): PendingRequest
     {
-        $_headers = [
-            'Accept' => 'application/json'
-        ];
+        $_headers = ['Accept' => 'application/json'];
 
-        if (count($this->header))
+        if (count($this->header)) {
             $_headers = array_merge($_headers, $this->header);
+        }
 
         return CURL::withHeaders($_headers);
     }
 
     /**
      * Request curl response
-     *
-     * @param Response $response
-     * @return CurlResponseInterface
      */
     private function response(Response $response): CurlResponseInterface
     {
-        /** @var CurlResponseInterface $result */
-        $result = new CurlResponse;
+        $result = new CurlResponse();
+        assert($result instanceof CurlResponseInterface);
 
         try {
             $_response = $response->json();
@@ -165,22 +154,22 @@ abstract class AbstractCurl implements CurlInterface
             /**
              * If there is validation errors
              */
-            throw_if(in_array("errors", array_keys($_response)), 'Exception', $_response['message']);
+            throw_if(in_array('errors', array_keys($_response)), 'Exception', $_response['message']);
 
             /**
              * If there is no 'status' indexes. Assume there is an error in the result.
              */
-            throw_if(!@$_response['status'], 'Exception', $_response['message']);
+            throw_if(! @$_response['status'], 'Exception', $_response['message']);
 
             /**
              * If return status is not success
              */
-            throw_if($_response['status'] !== "success", 'Exception', $_response['message']);
+            throw_if($_response['status'] !== 'success', 'Exception', $_response['message']);
 
-            $result->setStatus($_response['status'] === "success");
+            $result->setStatus($_response['status'] === 'success');
             $result->setMessage($_response['message']);
             $result->setData($_response['data']);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->logInstance()->log($th);
 
             $result->setMessage($th->getMessage());
@@ -192,10 +181,9 @@ abstract class AbstractCurl implements CurlInterface
     }
 
     // ? Getter Modules
+
     /**
      * Get url path
-     *
-     * @return string
      */
     public function getPath(): string
     {
@@ -204,8 +192,6 @@ abstract class AbstractCurl implements CurlInterface
 
     /**
      * Get url request
-     *
-     * @return string
      */
     public function getUrl(): string
     {
@@ -224,20 +210,16 @@ abstract class AbstractCurl implements CurlInterface
 
     /**
      * Get bearer token
-     *
-     * @return string|null
      */
-    public function getToken(): ?string
+    public function getToken(): string|null
     {
         return $this->token;
     }
 
     /**
      * Get user agent
-     *
-     * @return string|null
      */
-    public function getUserAgent(): ?string
+    public function getUserAgent(): string|null
     {
         return $this->userAgent;
     }
@@ -253,11 +235,9 @@ abstract class AbstractCurl implements CurlInterface
     }
 
     // ? Setter Modules
+
     /**
      * Set url path
-     *
-     * @param string $path
-     * @return self
      */
     public function setPath(string $path): self
     {
@@ -268,9 +248,6 @@ abstract class AbstractCurl implements CurlInterface
 
     /**
      * Set url request
-     *
-     * @param string $url
-     * @return self
      */
     public function setUrl(string $url): self
     {
@@ -283,7 +260,6 @@ abstract class AbstractCurl implements CurlInterface
      * Set header request
      *
      * @param array $header
-     * @return self
      */
     public function setHeader(array $header): self
     {
@@ -294,11 +270,8 @@ abstract class AbstractCurl implements CurlInterface
 
     /**
      * Set bearer token
-     *
-     * @param string|null $token
-     * @return self
      */
-    public function setToken(?string $token): self
+    public function setToken(string|null $token): self
     {
         $this->token = $token;
 
@@ -307,11 +280,8 @@ abstract class AbstractCurl implements CurlInterface
 
     /**
      * Set user agent
-     *
-     * @param string|null $userAgent
-     * @return self
      */
-    public function setUserAgent(?string $userAgent): self
+    public function setUserAgent(string|null $userAgent): self
     {
         $this->userAgent = $userAgent;
 
@@ -322,7 +292,6 @@ abstract class AbstractCurl implements CurlInterface
      * Set body request
      *
      * @param array $body
-     * @return self
      */
     public function setBody(array $body): self
     {

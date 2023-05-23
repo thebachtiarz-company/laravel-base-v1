@@ -1,14 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Helpers;
 
 use Illuminate\Support\Carbon;
 use TheBachtiarz\Base\App\Interfaces\CarbonInterface;
 
+use function array_keys;
+use function compact;
+use function iconv_strlen;
+use function in_array;
+use function tbbaseconfig;
+
 class CarbonHelper extends Carbon
 {
-    //
-
     /**
      * Split human date time type available
      *
@@ -16,7 +22,7 @@ class CarbonHelper extends Carbon
      */
     public static array $splitHumanDateTimeType = [
         'date' => CarbonInterface::CARBON_HUMAN_DATE_FORMAT,
-        'time' => CarbonInterface::CARBON_HUMAN_TIME_FORMAT
+        'time' => CarbonInterface::CARBON_HUMAN_TIME_FORMAT,
     ];
 
     /**
@@ -26,29 +32,25 @@ class CarbonHelper extends Carbon
      */
     public static array $splitSystemDateTimeType = [
         'date' => CarbonInterface::CARBON_DB_DATE_FORMAT,
-        'time' => CarbonInterface::CARBON_DB_TIME_FORMAT
+        'time' => CarbonInterface::CARBON_DB_TIME_FORMAT,
     ];
 
     /**
      * Init new self carbon.
      *
      * For customize the carbon it self.
-     *
-     * @return Carbon
      */
     public static function init(): Carbon
     {
-        return new Carbon;
+        return new Carbon();
     }
 
     // ? Date Format
+
     /**
      * Get full date time now.
      *
      * For human.
-     *
-     * @param Carbon|string|null $dateStart
-     * @return string
      */
     public static function humanFullDateTimeNow(Carbon|string|null $dateStart = null): string
     {
@@ -59,9 +61,6 @@ class CarbonHelper extends Carbon
 
     /**
      * Get date time now in timezone
-     *
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbDateTimeNowTimezone(Carbon|string|null $dateStart = null): Carbon
     {
@@ -73,9 +72,7 @@ class CarbonHelper extends Carbon
      *
      * For human.
      *
-     * @param Carbon|string|null $datetime
      * @param string $split Value: date|time
-     * @return string
      */
     public static function humanDateTime(Carbon|string|null $datetime = null, string $split = ''): string
     {
@@ -92,10 +89,6 @@ class CarbonHelper extends Carbon
      * Parse date time.
      *
      * For database.
-     *
-     * @param Carbon|string|null $datetime
-     * @param string $split
-     * @return string
      */
     public static function dbDateTime(Carbon|string|null $datetime = null, string $split = ''): string
     {
@@ -110,10 +103,6 @@ class CarbonHelper extends Carbon
 
     /**
      * Get interval date created from date updated
-     *
-     * @param Carbon|string $dateCreated
-     * @param Carbon|string $dateUpdated
-     * @return string
      */
     public static function humanIntervalCreateUpdate(Carbon|string $dateCreated, Carbon|string $dateUpdated): string
     {
@@ -122,16 +111,14 @@ class CarbonHelper extends Carbon
 
     /**
      * Convert date time to timestamp
-     *
-     * @param Carbon|string|null $datetime
-     * @param boolean $withMilli
-     * @return string
      */
     public static function anyConvDateToTimestamp(Carbon|string|null $datetime = null, bool $withMilli = false): string
     {
-        $_format = "U";
+        $_format = 'U';
 
-        if ($withMilli) $_format .= "u";
+        if ($withMilli) {
+            $_format .= 'u';
+        }
 
         return Carbon::parse($datetime ?? Carbon::now())->format($_format);
     }
@@ -140,7 +127,6 @@ class CarbonHelper extends Carbon
      * Convert timestamp to date time
      *
      * @param string $timestamp default: now()
-     * @return string
      */
     public static function dbTimestampToDateTime(string $timestamp = ''): string
     {
@@ -153,9 +139,6 @@ class CarbonHelper extends Carbon
      * Convert date time to interval time from now.
      *
      * For Human.
-     *
-     * @param Carbon|string $datetime
-     * @return string
      */
     public static function humanIntervalDateTime(Carbon|string $datetime): string
     {
@@ -166,10 +149,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific add years from now.
      *
      * For database.
-     *
-     * @param integer $years
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateAddYears(int $years = 1, Carbon|string|null $dateStart = null): Carbon
     {
@@ -180,10 +159,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific add months from now.
      *
      * For database.
-     *
-     * @param integer $months
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateAddMonths(int $months = 6, Carbon|string|null $dateStart = null): Carbon
     {
@@ -194,10 +169,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific add weeks from now.
      *
      * For database.
-     *
-     * @param integer $weeks
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateAddWeeks(int $weeks = 1, Carbon|string|null $dateStart = null): Carbon
     {
@@ -208,10 +179,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific add days from now.
 
      * For database.
-     *
-     * @param integer $days
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateAddDays(int $days = 30, Carbon|string|null $dateStart = null): Carbon
     {
@@ -222,10 +189,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific add hours from now.
      *
      * For database.
-     *
-     * @param integer $hours
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateAddHours(int $hours = 24, Carbon|string|null $dateStart = null): Carbon
     {
@@ -236,10 +199,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific add minutes from now.
      *
      * For database.
-     *
-     * @param integer $minutes
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateAddMinutes(int $minutes = 60, Carbon|string|null $dateStart = null): Carbon
     {
@@ -250,10 +209,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific add seconds from now.
      *
      * For database.
-     *
-     * @param integer $seconds
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateAddSeconds(int $seconds = 60, Carbon|string|null $dateStart = null): Carbon
     {
@@ -264,10 +219,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific sub years from now.
      *
      * For database.
-     *
-     * @param integer $years
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateSubYears(int $years = 1, Carbon|string|null $dateStart = null): Carbon
     {
@@ -278,10 +229,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific sub months from now.
      *
      * For database.
-     *
-     * @param integer $months
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateSubMonths(int $months = 6, Carbon|string|null $dateStart = null): Carbon
     {
@@ -292,10 +239,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific sub weeks from now.
      *
      * For database.
-     *
-     * @param integer $weeks
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateSubWeeks(int $weeks = 1, Carbon|string|null $dateStart = null): Carbon
     {
@@ -306,10 +249,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific sub days from now.
      *
      * For database.
-     *
-     * @param integer $days
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateSubDays(int $days = 30, Carbon|string|null $dateStart = null): Carbon
     {
@@ -320,10 +259,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific sub hours from now.
      *
      * For database.
-     *
-     * @param integer $hours
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateSubHours(int $hours = 24, Carbon|string|null $dateStart = null): Carbon
     {
@@ -334,10 +269,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific sub minutes from now.
      *
      * For database.
-     *
-     * @param integer $minutes
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateSubMinutes(int $minutes = 60, Carbon|string|null $dateStart = null): Carbon
     {
@@ -348,10 +279,6 @@ class CarbonHelper extends Carbon
      * Get date time by specific sub seconds from now.
      *
      * For database.
-     *
-     * @param integer $seconds
-     * @param Carbon|string|null $dateStart
-     * @return Carbon
      */
     public static function dbGetFullDateSubSeconds(int $seconds = 60, Carbon|string|null $dateStart = null): Carbon
     {
@@ -360,10 +287,6 @@ class CarbonHelper extends Carbon
 
     /**
      * Check is date given is equal with format given
-     *
-     * @param string $date
-     * @param string $format
-     * @return boolean
      */
     public static function isFormatEqual(string $date, string $format): bool
     {
@@ -373,11 +296,9 @@ class CarbonHelper extends Carbon
     // ? End of Date Format
 
     // ? Person
+
     /**
      * Convert date time to person age
-     *
-     * @param Carbon|string $datetime
-     * @return integer
      */
     public static function humanGetPersonAge(Carbon|string $datetime): int
     {
@@ -387,7 +308,6 @@ class CarbonHelper extends Carbon
     /**
      * Convert date time to person born date full
      *
-     * @param Carbon|string $datetime
      * @return array
      */
     public static function humanGetPersonBornDateFull(Carbon|string $datetime): array
@@ -403,9 +323,6 @@ class CarbonHelper extends Carbon
 
     /**
      * Check is person birthday today
-     *
-     * @param Carbon|string $datetime
-     * @return boolean
      */
     public static function isPersonBirthdayToday(Carbon|string $datetime): bool
     {
@@ -413,5 +330,6 @@ class CarbonHelper extends Carbon
 
         return $born->isBirthday();
     }
+
     // ? End of Person
 }
