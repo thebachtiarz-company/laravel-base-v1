@@ -33,7 +33,9 @@ class LogLibrary
             /** @var AbstractLog $abstractLog */
             $abstractLog = app()->make($_logClass);
 
-            if ($channel) $abstractLog->setChannel($channel);
+            if ($channel) {
+                $abstractLog->setChannel($channel);
+            }
 
             $abstractLog->setLogEntity($logEntity)->execute();
         }
@@ -47,7 +49,9 @@ class LogLibrary
      */
     protected function defineEntityType(mixed $logEntity): string
     {
-        if ($logEntity instanceof \Throwable) return 'error';
+        if ($logEntity instanceof \Throwable) {
+            return 'error';
+        }
 
         return 'info';
     }

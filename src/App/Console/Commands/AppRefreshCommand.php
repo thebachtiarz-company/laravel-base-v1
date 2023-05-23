@@ -7,7 +7,6 @@ use Illuminate\Support\Composer;
 use TheBachtiarz\Base\App\Helpers\CommandHelper;
 use TheBachtiarz\Base\App\Libraries\Cache\CacheLibrary;
 use TheBachtiarz\Base\App\Libraries\Log\LogLibrary;
-use TheBachtiarz\Base\BaseConfigInterface;
 use TheBachtiarz\Base\Config\Services\ConfigService;
 
 class AppRefreshCommand extends Command
@@ -79,7 +78,7 @@ class AppRefreshCommand extends Command
             /**
              * Run command before
              */
-            foreach (@$this->getStringableConfig(BaseConfigInterface::CONFIG_NAME . '.app_refresh_artisan_commands_before') ?? [] as $keyCmdBfr => $commandBefore) {
+            foreach (@$this->getStringableConfig('app_refresh_artisan_commands_before') ?? [] as $keyCmdBfr => $commandBefore) {
                 $this->commandHelper->phpArtisan($commandBefore['command'], $commandBefore['message']);
                 $this->info($commandBefore['message']);
             }
@@ -108,7 +107,7 @@ class AppRefreshCommand extends Command
             /**
              * Run command after
              */
-            foreach (@$this->getStringableConfig(BaseConfigInterface::CONFIG_NAME . '.app_refresh_artisan_commands_after') ?? [] as $keyCmdAft => $commandAfter) {
+            foreach (@$this->getStringableConfig('app_refresh_artisan_commands_after') ?? [] as $keyCmdAft => $commandAfter) {
                 $this->commandHelper->phpArtisan($commandAfter['command'], $commandAfter['message']);
                 $this->info($commandAfter['message']);
             }
@@ -144,12 +143,12 @@ class AppRefreshCommand extends Command
     /**
      * Get stringable config
      *
-     * @param string $configName
+     * @param string $path
      * @return array|null
      */
-    private function getStringableConfig(string $configName): ?array
+    private function getStringableConfig(string $path): ?array
     {
-        $config = tbconfigvalue($configName);
+        $config = tbbaseconfig($path, false);
 
         try {
             $config = json_decode($config, true);

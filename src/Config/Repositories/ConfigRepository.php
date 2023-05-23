@@ -83,7 +83,7 @@ class ConfigRepository extends AbstractRepository
      */
     public function deleteById(int $id): bool
     {
-        /** @var Model|ConfigInterface $_config */
+        /** @var Model $_config */
         $_config = $this->getById($id);
 
         return $_config->delete();

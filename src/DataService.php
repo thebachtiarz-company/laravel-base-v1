@@ -17,9 +17,9 @@ class DataService
 
         // ! App
         $registerConfig[] = [
-            'app.name' => tbconfigvalue(BaseConfigInterface::CONFIG_NAME . '.' . AppConfigInterface::CONFIG_APP_NAME),
-            'app.url' => tbconfigvalue(BaseConfigInterface::CONFIG_NAME . '.' . AppConfigInterface::CONFIG_APP_URL),
-            'app.timezone' => tbconfigvalue(BaseConfigInterface::CONFIG_NAME . '.' . AppConfigInterface::CONFIG_APP_TIMEZONE),
+            'app.name' => tbbaseconfig(AppConfigInterface::CONFIG_APP_NAME, false),
+            'app.url' => tbbaseconfig(AppConfigInterface::CONFIG_APP_URL, false),
+            'app.timezone' => tbbaseconfig(AppConfigInterface::CONFIG_APP_TIMEZONE, false),
             'app.key' => tbbaseconfig(AppConfigInterface::CONFIG_APP_KEY)
         ];
         // $_providers = config('app.providers');
@@ -42,7 +42,7 @@ class DataService
         $registerConfig[] = [
             'cors.paths' => array_merge(
                 $_paths,
-                [tbconfigvalue(BaseConfigInterface::CONFIG_NAME . '.' . AppConfigInterface::CONFIG_APP_PREFIX) . '/*']
+                [tbbaseconfig(AppConfigInterface::CONFIG_APP_PREFIX, false) . '/*']
             )
         ];
 
