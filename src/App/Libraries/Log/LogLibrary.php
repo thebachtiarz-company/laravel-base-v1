@@ -29,7 +29,6 @@ class LogLibrary
     public function log(mixed $logEntity, string|null $channel = null): void
     {
         $logClass = @$this->logClassEntity[$this->defineEntityType($logEntity)];
-        assert($logClass instanceof LogInterface || $logClass === null);
 
         if (! $logClass) {
             return;

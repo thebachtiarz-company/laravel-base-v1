@@ -162,10 +162,8 @@ class ResponseHelper
 
     /**
      * Get data resolver
-     *
-     * @return array
      */
-    private static function getDataResolver(): array
+    private static function getDataResolver(): mixed
     {
         try {
             if (static::$asPaginate) {
