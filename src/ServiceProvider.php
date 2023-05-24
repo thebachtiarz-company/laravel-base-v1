@@ -17,10 +17,10 @@ class ServiceProvider extends LaravelServiceProvider
      */
     public function register()
     {
-        $_appService = $this->app->make(AppService::class);
-        assert($_appService instanceof AppService);
+        $appService = $this->app->make(AppService::class);
+        assert($appService instanceof AppService);
 
-        $_appService->registerConfig();
+        $appService->registerConfig();
 
         if (! $this->app->runningInConsole()) {
             return;
@@ -38,10 +38,10 @@ class ServiceProvider extends LaravelServiceProvider
             return;
         }
 
-        $_configName  = BaseConfigInterface::CONFIG_NAME;
-        $_publishName = 'thebachtiarz-base';
+        $configName  = BaseConfigInterface::CONFIG_NAME;
+        $publishName = 'thebachtiarz-base';
 
-        $this->publishes([__DIR__ . "/../config/$_configName.php" => config_path("$_configName.php")], "$_publishName-config");
-        $this->publishes([__DIR__ . '/../database/migrations' => database_path('migrations')], "$_publishName-migrations");
+        $this->publishes([__DIR__ . "/../config/$configName.php" => config_path("$configName.php")], "$publishName-config");
+        $this->publishes([__DIR__ . '/../database/migrations' => database_path('migrations')], "$publishName-migrations");
     }
 }

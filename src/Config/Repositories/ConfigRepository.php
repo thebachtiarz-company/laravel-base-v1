@@ -19,13 +19,13 @@ class ConfigRepository extends AbstractRepository
      */
     public function getById(int $id): ConfigInterface
     {
-        $_config = Config::find($id);
+        $config = Config::find($id);
 
-        if (! $_config) {
+        if (! $config) {
             throw new ModelNotFoundException("Config with id '$id' not found");
         }
 
-        return $_config;
+        return $config;
     }
 
     /**
@@ -33,13 +33,13 @@ class ConfigRepository extends AbstractRepository
      */
     public function getByPath(string $path): ConfigInterface
     {
-        $_config = Config::getByPath($path)->first();
+        $config = Config::getByPath($path)->first();
 
-        if (! $_config) {
+        if (! $config) {
             throw new ModelNotFoundException("Config with path '$path' not found");
         }
 
-        return $_config;
+        return $config;
     }
 
     /**
@@ -48,14 +48,14 @@ class ConfigRepository extends AbstractRepository
     public function create(ConfigInterface $configInterface): ConfigInterface
     {
         /** @var Model $configInterface */
-        $_create = $this->createFromModel($configInterface);
-        assert($_create instanceof ConfigInterface);
+        $create = $this->createFromModel($configInterface);
+        assert($create instanceof ConfigInterface);
 
-        if (! $_create) {
+        if (! $create) {
             throw new ModelNotFoundException('Failed to create new config');
         }
 
-        return $_create;
+        return $create;
     }
 
     /**
@@ -64,9 +64,9 @@ class ConfigRepository extends AbstractRepository
     public function save(ConfigInterface $configInterface): ConfigInterface
     {
         /** @var Model|ConfigInterface $configInterface */
-        $_config = $configInterface->save();
+        $config = $configInterface->save();
 
-        if (! $_config) {
+        if (! $config) {
             throw new ModelNotFoundException('Failed to savecurrent config');
         }
 
@@ -78,10 +78,10 @@ class ConfigRepository extends AbstractRepository
      */
     public function deleteById(int $id): bool
     {
-        $_config = $this->getById($id);
-        assert($_config instanceof Model);
+        $config = $this->getById($id);
+        assert($config instanceof Model);
 
-        return $_config->delete();
+        return $config->delete();
     }
 
     /**
@@ -89,9 +89,9 @@ class ConfigRepository extends AbstractRepository
      */
     public function deleteByPath(string $path): bool
     {
-        $_config = $this->getByPath($path);
-        assert($_config instanceof Model);
+        $config = $this->getByPath($path);
+        assert($config instanceof Model);
 
-        return $_config->delete();
+        return $config->delete();
     }
 }

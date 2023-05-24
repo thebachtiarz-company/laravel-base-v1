@@ -20,9 +20,9 @@ abstract class AbstractRepository
      */
     protected function createFromModel(Model $model): Model
     {
-        $_data = $this->prepareCreate($model);
+        $data = $this->prepareCreate($model);
 
-        return $model::create($_data);
+        return $model::create($data);
     }
 
     /**

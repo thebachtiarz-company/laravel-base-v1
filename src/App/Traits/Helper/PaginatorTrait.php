@@ -35,7 +35,7 @@ trait PaginatorTrait
         int $perPage = 10,
         int $currentPage = 1,
     ): array {
-        $_result = [
+        $result = [
             'result' => [],
             'page_info' => [
                 'per_page' => $perPage,
@@ -54,48 +54,48 @@ trait PaginatorTrait
             }
         }
 
-        $_dataResult = [];
+        $dataResult = [];
 
         /**
          * Set total page
          */
-        $_result['page_info']['total_pages'] = ceil($_result['total_count'] / $perPage);
+        $result['page_info']['total_pages'] = ceil($result['total_count'] / $perPage);
 
         /**
          * Define current page
          */
-        for ($_loopCurrentPage = 1; $_loopCurrentPage <= $_result['page_info']['total_pages']; $_loopCurrentPage++) {
+        for ($loopCurrentPage = 1; $loopCurrentPage <= $result['page_info']['total_pages']; $loopCurrentPage++) {
             /**
              * Check page section
              */
-            if ($_loopCurrentPage !== $currentPage) {
+            if ($loopCurrentPage !== $currentPage) {
                 continue;
             }
 
             /**
              * Define start - finish item index
              */
-            $_indexStart  = ($currentPage - 1) * $perPage;
-            $_indexFinish = $_result['total_count'] < $currentPage * $perPage
-                ? $_result['total_count']
+            $indexStart  = ($currentPage - 1) * $perPage;
+            $indexFinish = $result['total_count'] < $currentPage * $perPage
+                ? $result['total_count']
                 : $currentPage * $perPage;
 
-            for ($_indexItem = $_indexStart; $_indexItem < $_indexFinish; $_indexItem++) {
-                if ($_indexItem + 1 > $_result['total_count']) {
+            for ($indexItem = $indexStart; $indexItem < $indexFinish; $indexItem++) {
+                if ($indexItem + 1 > $result['total_count']) {
                     break;
                 }
 
-                if (count($_dataResult) >= $perPage) {
+                if (count($dataResult) >= $perPage) {
                     break;
                 }
 
-                $_dataResult[] = $resultData[$_indexItem];
+                $dataResult[] = $resultData[$indexItem];
             }
         }
 
-        $_result['result'] = $_dataResult;
+        $result['result'] = $dataResult;
 
-        return $_result;
+        return $result;
     }
 
     /**

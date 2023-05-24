@@ -38,41 +38,41 @@ class ConfigService extends AbstractService
      */
     public function getConfigValue(string $path): mixed
     {
-        $_result       = null;
-        $_config       = new Config();
-        $_errorMessage = null;
+        $result       = null;
+        $config       = new Config();
+        $errorMessage = null;
 
         try {
-            $_config = $this->configRepository->getByPath($path);
+            $config = $this->configRepository->getByPath($path);
 
             goto RESULT;
         } catch (Throwable $th) {
-            $_errorMessage = $th->getMessage();
+            $errorMessage = $th->getMessage();
         }
 
         try {
-            $_config->setPath($path)->setValue(config($path));
+            $config->setPath($path)->setValue(config($path));
 
             goto RESULT;
         } catch (Throwable $th) {
-            $_errorMessage = $th->getMessage();
+            $errorMessage = $th->getMessage();
         }
 
         RESULT:
 
         try {
-            $_result = $_config->getValue();
+            $result = $config->getValue();
 
-            if ($_config->getIsEncrypt()) {
-                $_result = Crypt::decrypt($_result);
+            if ($config->getIsEncrypt()) {
+                $result = Crypt::decrypt($result);
             }
         } catch (Throwable $th) {
-            $_errorMessage = $th->getMessage();
+            $errorMessage = $th->getMessage();
         }
 
-        $this->setResponseData($_errorMessage ?? 'Config value', $_result);
+        $this->setResponseData($errorMessage ?? 'Config value', $result);
 
-        return $_result;
+        return $result;
     }
 
     /**
@@ -82,16 +82,16 @@ class ConfigService extends AbstractService
      */
     public function createOrUpdate(string $path, mixed $value, string|null $isEncrypt = null): ConfigInterface
     {
-        $_actionMethod = 'create';
+        $actionMethod = 'create';
 
         try {
-            $_config = $this->configRepository->getByPath($path);
+            $config = $this->configRepository->getByPath($path);
 
-            $_actionMethod = 'save';
+            $actionMethod = 'save';
         } catch (Throwable) {
-            $_config = new Config();
+            $config = new Config();
 
-            $_config->setPath($path)->setIsEncrypt(false);
+            $config->setPath($path)->setIsEncrypt(false);
         }
 
         if (gettype($value) === 'array') {
@@ -99,25 +99,25 @@ class ConfigService extends AbstractService
         }
 
         if (@$isEncrypt) {
-            $_encryptRequire = $isEncrypt === '1';
+            $encryptRequire = $isEncrypt === '1';
 
-            $_config->setIsEncrypt($_encryptRequire);
+            $config->setIsEncrypt($encryptRequire);
 
-            if ($_encryptRequire) {
+            if ($encryptRequire) {
                 $value = Crypt::encrypt($value);
             }
         }
 
-        $_config->setValue($value);
+        $config->setValue($value);
 
-        $_config = $this->configRepository->{$_actionMethod}($_config);
+        $config = $this->configRepository->{$actionMethod}($config);
 
         $this->setResponseData(
-            sprintf('Successfully %s config', $_actionMethod === 'create' ? 'create new' : 'update'),
-            $_config,
+            sprintf('Successfully %s config', $actionMethod === 'create' ? 'create new' : 'update'),
+            $config,
         );
 
-        return $_config;
+        return $config;
     }
 
     /**
@@ -125,10 +125,10 @@ class ConfigService extends AbstractService
      */
     public function deleteConfig(string $path): bool
     {
-        $_config = $this->configRepository->getByPath($path);
-        assert($_config instanceof Config);
+        $config = $this->configRepository->getByPath($path);
+        assert($config instanceof Config);
 
-        return $_config->delete();
+        return $config->delete();
     }
 
     /**
@@ -138,45 +138,45 @@ class ConfigService extends AbstractService
      */
     public function synchronizeConfig(): bool
     {
-        $_result = false;
+        $result = false;
 
         try {
-            $_configRegistered = tbbaseconfig(BaseConfigInterface::CONFIG_REGISTERED);
+            $configRegistered = tbbaseconfig(BaseConfigInterface::CONFIG_REGISTERED);
 
-            foreach ($_configRegistered ?? [] as $key => $configRegisterName) {
-                foreach (array_keys(config($configRegisterName)) ?? [] as $key => $configPath) {
-                    $_config = new Config();
-                    assert($_config instanceof ConfigInterface);
+            foreach ($configRegistered ?? [] as $key => $configRegisterName) {
+                foreach (array_keys(config($configRegisterName) ?? []) ?? [] as $key => $configPath) {
+                    $config = new Config();
+                    assert($config instanceof ConfigInterface);
 
                     try {
-                        $_config = $this->configRepository->getByPath("$configRegisterName.$configPath");
+                        $config = $this->configRepository->getByPath("$configRegisterName.$configPath");
                     } catch (Throwable) {
                     }
 
-                    $_configValue = $this->getConfigValue("$configRegisterName.$configPath");
+                    $configValue = $this->getConfigValue("$configRegisterName.$configPath");
 
-                    if ($_config->getId()) {
-                        config(["$configRegisterName.$configPath" => $_configValue]);
+                    if ($config->getId()) {
+                        config(["$configRegisterName.$configPath" => $configValue]);
 
                         continue;
                     }
 
-                    $this->createOrUpdate(path: "$configRegisterName.$configPath", value: $_configValue);
+                    $this->createOrUpdate(path: "$configRegisterName.$configPath", value: $configValue);
                 }
             }
 
             $this->createOrUpdate(
                 BaseConfigInterface::CONFIG_NAME . '.' . BaseConfigInterface::CONFIG_REGISTERED,
-                $_configRegistered,
+                $configRegistered,
             );
 
-            $_result = true;
+            $result = true;
         } catch (Throwable $th) {
             $this->log($th);
         } finally {
-            $this->setResponseData(sprintf('%s synchronize new config', $_result ? 'Successfully' : 'Failed to'), []);
+            $this->setResponseData(sprintf('%s synchronize new config', $result ? 'Successfully' : 'Failed to'), []);
 
-            return $_result;
+            return $result;
         }
     }
 

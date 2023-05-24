@@ -28,14 +28,14 @@ class LogLibrary
      */
     public function log(mixed $logEntity, string|null $channel = null): void
     {
-        $_logClass = @$this->logClassEntity[$this->defineEntityType($logEntity)];
-        assert($_logClass instanceof LogInterface || $_logClass === null);
+        $logClass = @$this->logClassEntity[$this->defineEntityType($logEntity)];
+        assert($logClass instanceof LogInterface || $logClass === null);
 
-        if (! $_logClass) {
+        if (! $logClass) {
             return;
         }
 
-        $abstractLog = app()->make($_logClass);
+        $abstractLog = app()->make($logClass);
         assert($abstractLog instanceof AbstractLog);
 
         if ($channel) {

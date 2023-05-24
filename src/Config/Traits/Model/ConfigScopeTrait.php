@@ -18,8 +18,8 @@ trait ConfigScopeTrait
      */
     public function scopeGetByPath(Builder $builder, string $path): Builder
     {
-        $_attribute = ConfigInterface::ATTRIBUTE_PATH;
+        $attribute = ConfigInterface::ATTRIBUTE_PATH;
 
-        return $builder->where(DB::raw("BINARY `$_attribute`"), $path);
+        return $builder->where(DB::raw("BINARY `$attribute`"), $path);
     }
 }

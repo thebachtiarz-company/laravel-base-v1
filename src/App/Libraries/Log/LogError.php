@@ -16,15 +16,15 @@ class LogError extends AbstractLog implements LogInterface
         $throwable = $this->logEntity;
         assert($throwable instanceof Throwable);
 
-        $_trace = $throwable->getTrace();
+        $trace = $throwable->getTrace();
 
-        $_logData = json_encode([
-            'file' => $_trace[0]['file'],
-            'line' => $_trace[0]['line'],
+        $logData = json_encode([
+            'file' => $trace[0]['file'],
+            'line' => $trace[0]['line'],
             'message' => $throwable->getMessage(),
             'code' => $throwable->getCode(),
         ]);
 
-        $this->createLog()->error($_logData);
+        $this->createLog()->error($logData);
     }
 }

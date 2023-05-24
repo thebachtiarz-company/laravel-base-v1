@@ -72,9 +72,9 @@ class ResponseHelper
      */
     public static function getJsonResult(): JsonResponse
     {
-        $_result = static::createResult();
+        $result = static::createResult();
 
-        return (new JsonResponse())->setData($_result);
+        return (new JsonResponse())->setData($result);
     }
 
     /**
@@ -151,10 +151,10 @@ class ResponseHelper
      */
     private static function getAccessDuration(): string|null
     {
-        $_duration = static::$accessStart && static::$accessFinish ? static::$accessFinish - static::$accessStart : null;
+        $duration = static::$accessStart && static::$accessFinish ? static::$accessFinish - static::$accessStart : null;
 
-        if (@$_duration >= 0 && (gettype($_duration) === 'integer')) {
-            return $_duration > 1 ? "$_duration second(s)" : "$_duration second";
+        if (@$duration >= 0 && (gettype($duration) === 'integer')) {
+            return $duration > 1 ? "$duration second(s)" : "$duration second";
         }
 
         return null;

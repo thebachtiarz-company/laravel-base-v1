@@ -64,8 +64,8 @@ if (! function_exists('tbdirlocation')) {
      */
     function tbdirlocation(string|null $subDir = null): string
     {
-        $_subDir = $subDir ? "/{$subDir}" : '';
+        $subDir = $subDir ? "/{$subDir}" : '';
 
-        return base_path(BaseConfigInterface::DIRECTORY_PATH) . $_subDir;
+        return base_path(BaseConfigInterface::DIRECTORY_PATH) . $subDir;
     }
 }

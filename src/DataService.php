@@ -27,10 +27,10 @@ class DataService
             'app.timezone' => tbbaseconfig(AppConfigInterface::CONFIG_APP_TIMEZONE, false),
             'app.key' => tbbaseconfig(AppConfigInterface::CONFIG_APP_KEY),
         ];
-        // $_providers = config('app.providers');
+        // $providers = config('app.providers');
         // $registerConfig[] = [
         //     'app.providers' => array_merge(
-        //         $_providers,
+        //         $providers,
         //         [
         //             \TheBachtiarz\Toolkit\Backend\RouteServiceProvider::class
         //         ]
@@ -41,10 +41,10 @@ class DataService
         $registerConfig[] = ['cache.default' => 'database'];
 
         // ! Cors paths
-        $_paths           = config('cors.paths');
+        $paths            = config('cors.paths');
         $registerConfig[] = [
             'cors.paths' => array_merge(
-                $_paths,
+                $paths,
                 [tbbaseconfig(AppConfigInterface::CONFIG_APP_PREFIX, false) . '/*'],
             ),
         ];

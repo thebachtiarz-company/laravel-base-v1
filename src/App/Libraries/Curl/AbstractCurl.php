@@ -131,13 +131,13 @@ abstract class AbstractCurl implements CurlInterface
      */
     private function curl(): PendingRequest
     {
-        $_headers = ['Accept' => 'application/json'];
+        $headers = ['Accept' => 'application/json'];
 
         if (count($this->header)) {
-            $_headers = array_merge($_headers, $this->header);
+            $headers = array_merge($headers, $this->header);
         }
 
-        return CURL::withHeaders($_headers);
+        return CURL::withHeaders($headers);
     }
 
     /**
@@ -149,26 +149,26 @@ abstract class AbstractCurl implements CurlInterface
         assert($result instanceof CurlResponseInterface);
 
         try {
-            $_response = $response->json();
+            $response = $response->json();
 
             /**
              * If there is validation errors
              */
-            throw_if(in_array('errors', array_keys($_response)), 'Exception', $_response['message']);
+            throw_if(in_array('errors', array_keys($response)), 'Exception', $response['message']);
 
             /**
              * If there is no 'status' indexes. Assume there is an error in the result.
              */
-            throw_if(! @$_response['status'], 'Exception', $_response['message']);
+            throw_if(! @$response['status'], 'Exception', $response['message']);
 
             /**
              * If return status is not success
              */
-            throw_if($_response['status'] !== 'success', 'Exception', $_response['message']);
+            throw_if($response['status'] !== 'success', 'Exception', $response['message']);
 
-            $result->setStatus($_response['status'] === 'success');
-            $result->setMessage($_response['message']);
-            $result->setData($_response['data']);
+            $result->setStatus($response['status'] === 'success');
+            $result->setMessage($response['message']);
+            $result->setData($response['data']);
         } catch (Throwable $th) {
             $this->logInstance()->log($th);
 

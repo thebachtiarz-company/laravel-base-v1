@@ -114,13 +114,13 @@ class CarbonHelper extends Carbon
      */
     public static function anyConvDateToTimestamp(Carbon|string|null $datetime = null, bool $withMilli = false): string
     {
-        $_format = 'U';
+        $format = 'U';
 
         if ($withMilli) {
-            $_format .= 'u';
+            $format .= 'u';
         }
 
-        return Carbon::parse($datetime ?? Carbon::now())->format($_format);
+        return Carbon::parse($datetime ?? Carbon::now())->format($format);
     }
 
     /**
