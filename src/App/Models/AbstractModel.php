@@ -26,12 +26,12 @@ abstract class AbstractModel extends Model implements AbstractModelInterface
         return $this->__get(self::ATTRIBUTE_ID);
     }
 
-    public function getCreatedAt(): string|null
+    public function getCreatedAt(): mixed
     {
         return $this->__get(self::ATTRIBUTE_CREATEDAT);
     }
 
-    public function getUpdatedAt(): string|null
+    public function getUpdatedAt(): mixed
     {
         return $this->__get(self::ATTRIBUTE_UPDATEDAT);
     }

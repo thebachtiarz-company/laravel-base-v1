@@ -25,8 +25,8 @@ class PaginateMiddleware
             || $request->has('sortType')
         ) {
             ResponseHelper::asPaginate(
-                perPage: $request->get('perPage') ?? 15,
-                currentPage: $request->get('currentPage') ?? 1,
+                perPage: (int) $request->get('perPage') ?? 15,
+                currentPage: (int) $request->get('currentPage') ?? 1,
                 sortAttribute: $request->get('sortAttribute') ?? null,
                 sortType: $request->get('sortType') ?? null,
             );

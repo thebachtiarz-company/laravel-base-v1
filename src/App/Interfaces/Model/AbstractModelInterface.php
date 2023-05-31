@@ -38,12 +38,12 @@ interface AbstractModelInterface
     /**
      * Get created at
      */
-    public function getCreatedAt(): string|null;
+    public function getCreatedAt(): mixed;
 
     /**
      * Get updated at
      */
-    public function getUpdatedAt(): string|null;
+    public function getUpdatedAt(): mixed;
 
     // ? Setter Modules
 

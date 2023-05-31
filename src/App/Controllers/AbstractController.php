@@ -19,8 +19,10 @@ abstract class AbstractController extends Controller
 
     /**
      * Response Helper
+     *
+     * @var ResponseHelper
      */
-    protected static ResponseHelper $responseHelper = ResponseHelper::class;
+    protected static $responseHelper = ResponseHelper::class;
 
     /**
      * Constructor
