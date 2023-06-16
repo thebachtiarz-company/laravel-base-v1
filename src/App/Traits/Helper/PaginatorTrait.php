@@ -7,6 +7,7 @@ namespace TheBachtiarz\Base\App\Traits\Helper;
 use function ceil;
 use function count;
 use function mb_strlen;
+use function sprintf;
 use function usort;
 
 /**
@@ -35,6 +36,7 @@ trait PaginatorTrait
         int $perPage = 10,
         int $currentPage = 1,
     ): array {
+        PROCESS_BEGIN:
         $result = [
             'result' => [],
             'page_info' => [
@@ -43,14 +45,17 @@ trait PaginatorTrait
                 'total_pages' => 1,
             ],
             'total_count' => count($resultData),
+            'sort_attributes' => [],
         ];
 
         /**
-         * Sorting process data result
+         * Sorting process data before paginate process
          */
+        PROCESS_SORTING_DATA:
         if (static::$itemsRequestSort) {
             foreach (static::$itemsRequestSort as $attribute => $type) {
-                $resultData = static::sortArrayResult($resultData, $attribute, $type);
+                $resultData                  = static::sortArrayResult($resultData, $attribute, $type);
+                $result['sort_attributes'][] = sprintf('%s_%s', $attribute, $type);
             }
         }
 
@@ -59,11 +64,13 @@ trait PaginatorTrait
         /**
          * Set total page
          */
+        PROCESS_SET_TOTAL_PAGE:
         $result['page_info']['total_pages'] = ceil($result['total_count'] / $perPage);
 
         /**
          * Define current page
          */
+        PROCESS_SET_CURRENT_PAGE_DATA:
         for ($loopCurrentPage = 1; $loopCurrentPage <= $result['page_info']['total_pages']; $loopCurrentPage++) {
             /**
              * Check page section
@@ -91,6 +98,16 @@ trait PaginatorTrait
 
                 $dataResult[] = $resultData[$indexItem];
             }
+        }
+
+        /**
+         * Check if current page is not correct
+         */
+        PROCESS_CURRENT_PAGE_REDUCER:
+        if (count($dataResult) < 1 && $currentPage > 1) {
+            --$currentPage;
+            $result['page_info']['current_page'] = $currentPage;
+            goto PROCESS_SET_CURRENT_PAGE_DATA;
         }
 
         $result['result'] = $dataResult;

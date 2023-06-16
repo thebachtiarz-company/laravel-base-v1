@@ -19,17 +19,15 @@ abstract class AbstractController extends Controller
 
     /**
      * Response Helper
-     *
-     * @var ResponseHelper
      */
-    protected static $responseHelper = ResponseHelper::class;
+    protected static ResponseHelper $responseHelper = ResponseHelper::class;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        static::$responseHelper::setAccessStart();
+        static::$responseHelper::init();
     }
 
     /**
@@ -37,7 +35,6 @@ abstract class AbstractController extends Controller
      */
     public function __destruct()
     {
-        static::$responseHelper::setAccessFinish();
     }
 
     /**

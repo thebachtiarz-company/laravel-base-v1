@@ -26,12 +26,12 @@ class ResponseHelper
     protected static int $httpCode = 200;
 
     /**
-     * Access start
+     * Access start timestamp
      */
     protected static mixed $accessStart = null;
 
     /**
-     * Access finish
+     * Access finish timestamp
      */
     protected static mixed $accessFinish = null;
 
@@ -41,31 +41,48 @@ class ResponseHelper
     protected static mixed $accessDuration = null;
 
     /**
-     * Message service
+     * Message response
      */
     protected static string $message = '';
 
     /**
-     * Data service
+     * Data response
      */
     protected static mixed $data = null;
 
     /**
-     * Get result as paginate
+     * Tag result as paginate
      */
     protected static bool $asPaginate = false;
 
     /**
-     * Get result per page
+     * Tag paginate result per page
      */
     protected static int $perPage = 15;
 
     /**
-     * Get index page result
+     * Tag paginate index page result
      */
     protected static int $currentPage = 1;
 
+    /**
+     * Attributes paginator options
+     */
+    protected static array|null $attributesPaginator = null;
+
     // ? Public Modules
+
+    /**
+     * Init response result
+     *
+     * @return static
+     */
+    public static function init(): static
+    {
+        static::setAccessStart();
+
+        return new static();
+    }
 
     /**
      * Get json result
@@ -114,6 +131,63 @@ class ResponseHelper
         return new static();
     }
 
+    /**
+     * Make an/some attribute as paginate result
+     *
+     * @param array|null $paginateOptions Format: ['attribute_name' => ['perPage' => 15, 'currentPage' => 1, 'sortAttribute' => null, 'sortType' => null]]
+     *
+     * @return static
+     */
+    public static function attributesPaginate(array|null $paginateOptions = null): static
+    {
+        if ($paginateOptions) {
+            static::$attributesPaginator = $paginateOptions;
+        }
+
+        return new static();
+    }
+
+    // ? Protected Modules
+
+    /**
+     * Custom attribute paginator resolver
+     *
+     * @return static
+     */
+    protected static function resolveAttributePaginateResult(): static
+    {
+        static::$itemsRequestSort = null;
+
+        foreach (static::$attributesPaginator as $attribute => $options) {
+            $originalAttributeValues = @static::$data[$attribute];
+
+            if (! $originalAttributeValues) {
+                continue;
+            }
+
+            $customAttributeValues = new static();
+
+            if (@$options['sortAttribute']) {
+                $customAttributeValues = $customAttributeValues::addPaginateSort(
+                    $options['sortAttribute'] ?? '',
+                    $options['sortType'] ?? 'ASC',
+                );
+            }
+
+            $customAttributeValues = $customAttributeValues::getPaginateResult(
+                $originalAttributeValues,
+                @$options['perPage'] ?? 15,
+                @$options['currentPage'] ?? 1,
+            );
+
+            static::$data[$attribute] = $customAttributeValues;
+        }
+
+        static::$itemsRequestSort = null;
+
+        return new static();
+    }
+
     // ? Private Modules
 
     /**
@@ -147,27 +221,21 @@ class ResponseHelper
     }
 
     /**
-     * Get access duration
-     */
-    private static function getAccessDuration(): string|null
-    {
-        $duration = static::$accessStart && static::$accessFinish ? static::$accessFinish - static::$accessStart : null;
-
-        if (@$duration >= 0 && (gettype($duration) === 'integer')) {
-            return $duration > 1 ? "$duration second(s)" : "$duration second";
-        }
-
-        return null;
-    }
-
-    /**
      * Get data resolver
      */
     private static function getDataResolver(): mixed
     {
         try {
             if (static::$asPaginate) {
-                return static::getPaginateResult(static::$data ?? [], static::$perPage, static::$currentPage);
+                return static::getPaginateResult(
+                    static::$data ?? [],
+                    static::$perPage,
+                    static::$currentPage,
+                );
+            }
+
+            if (static::$attributesPaginator) {
+                static::resolveAttributePaginateResult();
             }
 
             return static::$data;
@@ -177,6 +245,102 @@ class ResponseHelper
     }
 
     // ? Getter Modules
+
+    /**
+     * Get status response
+     */
+    public static function getStatus(): string
+    {
+        return static::$status;
+    }
+
+    /**
+     * Get http code response
+     */
+    public static function getHttpCode(): int
+    {
+        return static::$httpCode;
+    }
+
+    /**
+     * Get access start timestamp
+     */
+    public static function getAccessStart(): mixed
+    {
+        return static::$accessStart;
+    }
+
+    /**
+     * Get access finish timestamp
+     */
+    public static function getAccessFinish(): mixed
+    {
+        return static::$accessFinish;
+    }
+
+    /**
+     * Get access duration
+     */
+    public static function getAccessDuration(): mixed
+    {
+        static::$accessDuration = null;
+
+        $duration = static::$accessStart && static::$accessFinish ? static::$accessFinish - static::$accessStart : null;
+
+        if (@$duration >= 0 && (gettype($duration) === 'integer')) {
+            static::$accessDuration = $duration > 1 ? "$duration second(s)" : "$duration second";
+        }
+
+        return static::$accessDuration;
+    }
+
+    /**
+     * Get message response
+     */
+    public static function getMessage(): string
+    {
+        return static::$message;
+    }
+
+    /**
+     * Get data response
+     */
+    public static function getData(): mixed
+    {
+        return static::$data;
+    }
+
+    /**
+     * Get is result as paginate
+     */
+    public static function isAsPaginate(): bool
+    {
+        return static::$asPaginate;
+    }
+
+    /**
+     * Get result paginate per page
+     */
+    public static function getPerPage(): int
+    {
+        return static::$perPage;
+    }
+
+    /**
+     * Get result paginate index page
+     */
+    public static function getCurrentPage(): int
+    {
+        return static::$currentPage;
+    }
+
+    /**
+     * Get attribute paginator
+     */
+    public static function getAttributesPaginate(string|null $attributeName = null): array|null
+    {
+        return @static::$attributesPaginator[$attributeName] ?? static::$attributesPaginator;
+    }
 
     // ? Setter Modules
 
@@ -248,6 +412,21 @@ class ResponseHelper
             static::$message = $message;
             static::$data    = $data;
         }
+
+        return new static();
+    }
+
+    /**
+     * Set attribute paginator
+     *
+     * @param string $attributeName Attribute Name
+     * @param array  $options       Format: ['perPage' => 15, 'currentPage' => 1, 'sortAttribute' => null, 'sortType' => null]
+     *
+     * @return static
+     */
+    public static function setAttributesPaginate(string $attributeName, array $options): static
+    {
+        static::$attributesPaginator[$attributeName] = $options;
 
         return new static();
     }
