@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\App\Helpers;
 
+use Carbon\CarbonInterval;
 use Illuminate\Http\JsonResponse;
+use TheBachtiarz\Base\App\Libraries\Paginator\PaginateResult;
 use TheBachtiarz\Base\App\Traits\Helper\PaginatorTrait;
 use Throwable;
 
-use function gettype;
+use function app;
+use function assert;
 use function mb_strlen;
 
 class ResponseHelper
@@ -26,19 +29,19 @@ class ResponseHelper
     protected static int $httpCode = 200;
 
     /**
-     * Access start timestamp
+     * Execute start timestamp
      */
-    protected static mixed $accessStart = null;
+    protected static mixed $executeStart = null;
 
     /**
-     * Access finish timestamp
+     * Execute finish timestamp
      */
-    protected static mixed $accessFinish = null;
+    protected static mixed $executeFinish = null;
 
     /**
-     * Access duration
+     * Execute duration
      */
-    protected static mixed $accessDuration = null;
+    protected static mixed $executeDuration = null;
 
     /**
      * Message response
@@ -49,6 +52,11 @@ class ResponseHelper
      * Data response
      */
     protected static mixed $data = null;
+
+    /**
+     * Return result data direct without paginating
+     */
+    protected static bool $directResult = false;
 
     /**
      * Tag result as paginate
@@ -79,7 +87,7 @@ class ResponseHelper
      */
     public static function init(): static
     {
-        static::setAccessStart();
+        static::setExecuteStart();
 
         return new static();
     }
@@ -165,22 +173,17 @@ class ResponseHelper
                 continue;
             }
 
-            $customAttributeValues = new static();
+            $customAttributeValues = app(PaginateResult::class);
+            assert($customAttributeValues instanceof PaginateResult);
 
-            if (@$options['sortAttribute']) {
-                $customAttributeValues = $customAttributeValues::addPaginateSort(
-                    $options['sortAttribute'] ?? '',
-                    $options['sortType'] ?? 'ASC',
-                );
-            }
-
-            $customAttributeValues = $customAttributeValues::getPaginateResult(
-                $originalAttributeValues,
-                @$options['perPage'] ?? 15,
-                @$options['currentPage'] ?? 1,
+            $customAttributeValues->execute(
+                resultData: $originalAttributeValues,
+                perPage: @$options['perPage'] ?? 15,
+                currentPage: @$options['currentPage'] ?? 1,
+                sortAttributes: [@$options],
             );
 
-            static::$data[$attribute] = $customAttributeValues;
+            static::$data[$attribute] = $customAttributeValues->toArray();
         }
 
         static::$itemsRequestSort = null;
@@ -201,22 +204,22 @@ class ResponseHelper
             'status' => static::$status,
             'http_code' => static::$httpCode,
             'message' => static::$message,
-            'access_time' => static::getAccessTime(),
+            'execute_time' => static::getExecuteTime(),
             'data' => static::getDataResolver(),
         ];
     }
 
     /**
-     * Get response access time
+     * Get response execute time
      *
      * @return array
      */
-    private static function getAccessTime(): array
+    private static function getExecuteTime(): array
     {
         return [
-            'start' => static::$accessStart,
-            'finish' => static::$accessFinish ?? static::setAccessFinish(CarbonHelper::anyConvDateToTimestamp())::$accessFinish,
-            'duration' => static::getAccessDuration(),
+            'start' => static::$executeStart,
+            'finish' => static::$executeFinish ?? static::setExecuteFinish(CarbonHelper::anyConvDateToTimestamp())::$executeFinish,
+            'duration' => static::getExecuteDuration(),
         ];
     }
 
@@ -226,17 +229,33 @@ class ResponseHelper
     private static function getDataResolver(): mixed
     {
         try {
+            if (static::$directResult) {
+                goto RESULT;
+            }
+
             if (static::$asPaginate) {
-                return static::getPaginateResult(
-                    static::$data ?? [],
-                    static::$perPage,
-                    static::$currentPage,
-                );
+                $paginate = app(PaginateResult::class);
+                assert($paginate instanceof PaginateResult);
+
+                $sortAttributes = [];
+
+                foreach (static::$itemsRequestSort ?? [] as $attribute => $type) {
+                    $sortAttributes[] = ['sortAttribute' => $attribute, 'sortType' => $type];
+                }
+
+                return $paginate->execute(
+                    resultData: static::$data,
+                    perPage: static::$perPage,
+                    currentPage: static::$currentPage,
+                    sortAttributes: $sortAttributes,
+                )->toArray();
             }
 
             if (static::$attributesPaginator) {
                 static::resolveAttributePaginateResult();
             }
+
+            RESULT:
 
             return static::$data;
         } catch (Throwable) {
@@ -263,35 +282,35 @@ class ResponseHelper
     }
 
     /**
-     * Get access start timestamp
+     * Get execute start timestamp
      */
-    public static function getAccessStart(): mixed
+    public static function getExecuteStart(): mixed
     {
-        return static::$accessStart;
+        return static::$executeStart;
     }
 
     /**
-     * Get access finish timestamp
+     * Get execute finish timestamp
      */
-    public static function getAccessFinish(): mixed
+    public static function getExecuteFinish(): mixed
     {
-        return static::$accessFinish;
+        return static::$executeFinish;
     }
 
     /**
-     * Get access duration
+     * Get execute duration
      */
-    public static function getAccessDuration(): mixed
+    public static function getExecuteDuration(): mixed
     {
-        static::$accessDuration = null;
+        static::$executeDuration = null;
 
-        $duration = static::$accessStart && static::$accessFinish ? static::$accessFinish - static::$accessStart : null;
-
-        if (@$duration >= 0 && (gettype($duration) === 'integer')) {
-            static::$accessDuration = $duration > 1 ? "$duration second(s)" : "$duration second";
+        if (static::$executeStart && static::$executeFinish) {
+            static::$executeDuration = CarbonInterval::seconds(static::$executeFinish - static::$executeStart)
+                ->cascade()
+                ->forHumans();
         }
 
-        return static::$accessDuration;
+        return static::$executeDuration;
     }
 
     /**
@@ -369,25 +388,25 @@ class ResponseHelper
     }
 
     /**
-     * Set access start
+     * Set execute start
      *
      * @return static
      */
-    public static function setAccessStart(): static
+    public static function setExecuteStart(): static
     {
-        static::$accessStart = CarbonHelper::anyConvDateToTimestamp();
+        static::$executeStart = CarbonHelper::anyConvDateToTimestamp();
 
         return new static();
     }
 
     /**
-     * Set access finish
+     * Set execute finish
      *
      * @return static
      */
-    public static function setAccessFinish(): static
+    public static function setExecuteFinish(): static
     {
-        static::$accessFinish = CarbonHelper::anyConvDateToTimestamp();
+        static::$executeFinish = CarbonHelper::anyConvDateToTimestamp();
 
         return new static();
     }
@@ -412,6 +431,18 @@ class ResponseHelper
             static::$message = $message;
             static::$data    = $data;
         }
+
+        return new static();
+    }
+
+    /**
+     * Set result data as paginated
+     *
+     * @return static
+     */
+    public static function setAsPaginate(bool $asPaginate = true): static
+    {
+        static::$asPaginate = $asPaginate;
 
         return new static();
     }

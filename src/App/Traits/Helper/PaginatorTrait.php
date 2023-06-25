@@ -105,7 +105,7 @@ trait PaginatorTrait
          */
         PROCESS_CURRENT_PAGE_REDUCER:
         if (count($dataResult) < 1 && $currentPage > 1) {
-            --$currentPage;
+            $currentPage = $result['page_info']['total_pages'];
             $result['page_info']['current_page'] = $currentPage;
             goto PROCESS_SET_CURRENT_PAGE_DATA;
         }

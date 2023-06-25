@@ -14,20 +14,6 @@ use function sprintf;
 class ConfigSynchronizeCommand extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'thebachtiarz:base:config:sync';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Synchronize All Config Into Database';
-
-    /**
      * {@inheritDoc}
      *
      * @param ConfigService $configService
@@ -39,6 +25,9 @@ class ConfigSynchronizeCommand extends Command
         protected CommandHelper $commandHelper,
         protected LogLibrary $logLibrary,
     ) {
+        $this->signature   = 'thebachtiarz:base:config:sync';
+        $this->description = 'Synchronize All Config Into Database';
+
         parent::__construct();
 
         $this->configService = $configService;

@@ -18,20 +18,6 @@ use function tbbaseconfig;
 class AppRefreshCommand extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'thebachtiarz:base:app:refresh';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Refresh the app for clean all cache etc.';
-
-    /**
      * Constructor
      */
     public function __construct(
@@ -41,6 +27,9 @@ class AppRefreshCommand extends Command
         protected CommandHelper $commandHelper,
         protected LogLibrary $logLibrary,
     ) {
+        $this->signature   = 'thebachtiarz:base:app:refresh';
+        $this->description = 'Refresh the app for clean all cache etc.';
+
         parent::__construct();
 
         $this->composer      = $composer;

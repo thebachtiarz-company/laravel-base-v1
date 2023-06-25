@@ -19,26 +19,15 @@ use function tbdirlocation;
 class BackupLogCommand extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'thebachtiarz:base:backup:log';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Backup application logger files';
-
-    /**
      * Constructor
      */
     public function __construct(
         protected CommandHelper $commandHelper,
         protected LogLibrary $logLibrary,
     ) {
+        $this->signature   = 'thebachtiarz:base:backup:log';
+        $this->description = 'Backup application logger files';
+
         parent::__construct();
 
         $this->commandHelper = $commandHelper;

@@ -25,6 +25,11 @@ abstract class AbstractService
     protected bool $responseResult = true;
 
     /**
+     * Write any log
+     */
+    protected bool $writeLog = true;
+
+    /**
      * Set service result response
      *
      * @param string $message  Default: ''
@@ -69,6 +74,10 @@ abstract class AbstractService
      */
     final protected function log(mixed $log, string|null $channel = 'developer'): void
     {
+        if (! $this->writeLog) {
+            return;
+        }
+
         /** @var LogLibrary @logLibrary */
         $logLibrary = app()->make(LogLibrary::class);
 
@@ -85,6 +94,18 @@ abstract class AbstractService
     public function hideResponseResult(): static
     {
         $this->responseResult = false;
+
+        return $this;
+    }
+
+    /**
+     * Ignore any log
+     *
+     * @return static
+     */
+    public function ignoreLog(): static
+    {
+        $this->writeLog = false;
 
         return $this;
     }
