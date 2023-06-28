@@ -8,6 +8,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use TheBachtiarz\Base\App\Libraries\Paginator\PaginateResult;
+use Throwable;
 
 use function app;
 use function array_map;
@@ -45,13 +46,16 @@ class SearchResultOutput implements SearchResultOutputInterface
 
         $resultItem = $result->items();
 
-        if ($mapName) {
-            $resultItem = [
-                ...array_map(
-                    static fn (Model $model) => $model->{$mapName}(),
-                    $this->resultCollection->all(),
-                ),
-            ];
+        try {
+            if ($mapName) {
+                $resultItem = [
+                    ...array_map(
+                        static fn (Model $model): array => $model->{$mapName}(),
+                        $this->resultCollection->all(),
+                    ),
+                ];
+            }
+        } catch (Throwable) {
         }
 
         $this->resultPaginate

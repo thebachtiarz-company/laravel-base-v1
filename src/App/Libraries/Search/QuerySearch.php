@@ -26,7 +26,7 @@ class QuerySearch extends AbstractSearch implements QuerySearchInterface
         assert($paginateResult instanceof LengthAwarePaginator || $paginateResult === null);
 
         if (! $paginateResult) {
-            $prepare = $querySearchInputInterface->getModel()->query();
+            $prepare = $querySearchInputInterface->getCustomBuilder() ?: $querySearchInputInterface->getModel()->query();
             assert($prepare instanceof EloquentBuilder || $prepare instanceof QueryBuilder);
 
             if (count($querySearchInputInterface->getWhereConditions())) {

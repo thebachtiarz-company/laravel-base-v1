@@ -52,8 +52,8 @@ final class PaginateResult extends AbstractPaginator implements PaginateResultIn
          * Sorting process data before paginate process
          */
         PROCESS_SORTING_DATA:
-        if (count($this->sortAttribute)) {
-            foreach ($this->sortAttribute as $attribute => $type) {
+        if (count($this->getDataSort()->getSortAttribute())) {
+            foreach ($this->getDataSort()->getSortAttribute() as $attribute => $type) {
                 $resultData = $this->sortArrayResult($resultData, $attribute, $type);
             }
         }

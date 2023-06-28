@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\App\Libraries\Search\Params;
 
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +18,11 @@ interface QuerySearchInputInterface
      * Get model entity
      */
     public function getModel(): Model;
+
+    /**
+     * Get custom builder
+     */
+    public function getCustomBuilder(): Builder|null;
 
     /**
      * Get custom paginate
@@ -56,6 +62,11 @@ interface QuerySearchInputInterface
     public function setModel(Model $model): self;
 
     /**
+     * Set custom builder
+     */
+    public function setCustomBuilder(Builder $builder): self;
+
+    /**
      * Set custom paginate.
      *
      * Will send directly into search result.
@@ -68,18 +79,14 @@ interface QuerySearchInputInterface
     public function setMapMethod(string $mapMethod): self;
 
     /**
-     * Set where conditions.
-     *
-     * Format: ['column', 'operator', 'condition', ?'and']
+     * Add where conditions.
      */
-    public function setWhereConditions(array $whereConditions): self;
+    public function addWhereConditions(string $column, string $operator, mixed $condition, string|null $iterator = 'and'): self;
 
     /**
-     * Set order conditions.
-     *
-     * Format: ['column', 'direction']|['column']
+     * Add order conditions.
      */
-    public function setOrderConditions(array $orderConditions): self;
+    public function addOrderConditions(string $column, string|null $direction = 'asc'): self;
 
     /**
      * Set per page

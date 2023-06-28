@@ -7,17 +7,16 @@ namespace TheBachtiarz\Base\App\Helpers;
 use Carbon\CarbonInterval;
 use Illuminate\Http\JsonResponse;
 use TheBachtiarz\Base\App\Libraries\Paginator\PaginateResult;
-use TheBachtiarz\Base\App\Traits\Helper\PaginatorTrait;
+use TheBachtiarz\Base\App\Libraries\Paginator\Params\PaginatorParam;
 use Throwable;
 
 use function app;
 use function assert;
+use function count;
 use function mb_strlen;
 
 class ResponseHelper
 {
-    use PaginatorTrait;
-
     /**
      * Status response
      */
@@ -52,31 +51,6 @@ class ResponseHelper
      * Data response
      */
     protected static mixed $data = null;
-
-    /**
-     * Return result data direct without paginating
-     */
-    protected static bool $directResult = false;
-
-    /**
-     * Tag result as paginate
-     */
-    protected static bool $asPaginate = false;
-
-    /**
-     * Tag paginate result per page
-     */
-    protected static int $perPage = 15;
-
-    /**
-     * Tag paginate index page result
-     */
-    protected static int $currentPage = 1;
-
-    /**
-     * Attributes paginator options
-     */
-    protected static array|null $attributesPaginator = null;
 
     // ? Public Modules
 
@@ -113,43 +87,37 @@ class ResponseHelper
     }
 
     /**
-     * Get result as paginate
+     * Assert result as paginated
      *
-     * @param int         $perPage       default: 15
-     * @param int         $currentPage   default: 1
-     * @param string|null $sortAttribute default: null
-     * @param string|null $sortType      default: null ['ASC', 'DESC']
+     * @param int|null   $perPage                   Default: 15
+     * @param int|null   $currentPage               Default: 1
+     * @param array|null $sortOptions               Format: [['sortAttribute' => null, 'sortType' => null]]
+     * @param array|null $attributesPaginateOptions Format: ['attribute_name' => ['perPage' => 15, 'currentPage' => 1, 'sortOptions' => [['sortAttribute' => null, 'sortType' => null]]]]
      *
      * @return static
      */
     public static function asPaginate(
-        int $perPage = 15,
-        int $currentPage = 1,
-        string|null $sortAttribute = null,
-        string|null $sortType = null,
+        int|null $perPage = null,
+        int|null $currentPage = null,
+        array|null $sortOptions = [],
+        array|null $attributesPaginateOptions = [],
     ): static {
-        static::$asPaginate  = true;
-        static::$perPage     = $perPage;
-        static::$currentPage = $currentPage;
+        PaginatorParam::setAsPaginate(true);
 
-        if (mb_strlen($sortAttribute ?? '') > 0) {
-            static::addPaginateSort($sortAttribute ?? '', $sortType ?? 'ASC');
+        if ($perPage) {
+            PaginatorParam::setPerPage($perPage);
         }
 
-        return new static();
-    }
+        if ($currentPage) {
+            PaginatorParam::setCurrentPage($currentPage);
+        }
 
-    /**
-     * Make an/some attribute as paginate result
-     *
-     * @param array|null $paginateOptions Format: ['attribute_name' => ['perPage' => 15, 'currentPage' => 1, 'sortAttribute' => null, 'sortType' => null]]
-     *
-     * @return static
-     */
-    public static function attributesPaginate(array|null $paginateOptions = null): static
-    {
-        if ($paginateOptions) {
-            static::$attributesPaginator = $paginateOptions;
+        if (count($sortOptions)) {
+            PaginatorParam::setResultSortOptions($sortOptions);
+        }
+
+        if (count($attributesPaginateOptions)) {
+            PaginatorParam::setAttributePaginateOptions($attributesPaginateOptions);
         }
 
         return new static();
@@ -164,9 +132,7 @@ class ResponseHelper
      */
     protected static function resolveAttributePaginateResult(): static
     {
-        static::$itemsRequestSort = null;
-
-        foreach (static::$attributesPaginator as $attribute => $options) {
+        foreach (PaginatorParam::getAttributesPaginateOptions() as $attribute => $options) {
             $originalAttributeValues = @static::$data[$attribute];
 
             if (! $originalAttributeValues) {
@@ -180,13 +146,11 @@ class ResponseHelper
                 resultData: $originalAttributeValues,
                 perPage: @$options['perPage'] ?? 15,
                 currentPage: @$options['currentPage'] ?? 1,
-                sortAttributes: [@$options],
+                sortAttributes: @$options ?? [],
             );
 
             static::$data[$attribute] = $customAttributeValues->toArray();
         }
-
-        static::$itemsRequestSort = null;
 
         return new static();
     }
@@ -229,29 +193,29 @@ class ResponseHelper
     private static function getDataResolver(): mixed
     {
         try {
-            if (static::$directResult) {
+            if (PaginatorParam::isDirectResult()) {
                 goto RESULT;
             }
 
-            if (static::$asPaginate) {
+            if (PaginatorParam::isAsPaginate()) {
                 $paginate = app(PaginateResult::class);
                 assert($paginate instanceof PaginateResult);
 
                 $sortAttributes = [];
 
-                foreach (static::$itemsRequestSort ?? [] as $attribute => $type) {
+                foreach (PaginatorParam::getResultSortOptions() ?? [] as $attribute => $type) {
                     $sortAttributes[] = ['sortAttribute' => $attribute, 'sortType' => $type];
                 }
 
                 return $paginate->execute(
                     resultData: static::$data,
-                    perPage: static::$perPage,
-                    currentPage: static::$currentPage,
+                    perPage: PaginatorParam::getPerPage(),
+                    currentPage: PaginatorParam::getCurrentPage(),
                     sortAttributes: $sortAttributes,
                 )->toArray();
             }
 
-            if (static::$attributesPaginator) {
+            if (count(PaginatorParam::getAttributesPaginateOptions())) {
                 static::resolveAttributePaginateResult();
             }
 
@@ -329,38 +293,6 @@ class ResponseHelper
         return static::$data;
     }
 
-    /**
-     * Get is result as paginate
-     */
-    public static function isAsPaginate(): bool
-    {
-        return static::$asPaginate;
-    }
-
-    /**
-     * Get result paginate per page
-     */
-    public static function getPerPage(): int
-    {
-        return static::$perPage;
-    }
-
-    /**
-     * Get result paginate index page
-     */
-    public static function getCurrentPage(): int
-    {
-        return static::$currentPage;
-    }
-
-    /**
-     * Get attribute paginator
-     */
-    public static function getAttributesPaginate(string|null $attributeName = null): array|null
-    {
-        return @static::$attributesPaginator[$attributeName] ?? static::$attributesPaginator;
-    }
-
     // ? Setter Modules
 
     /**
@@ -431,33 +363,6 @@ class ResponseHelper
             static::$message = $message;
             static::$data    = $data;
         }
-
-        return new static();
-    }
-
-    /**
-     * Set result data as paginated
-     *
-     * @return static
-     */
-    public static function setAsPaginate(bool $asPaginate = true): static
-    {
-        static::$asPaginate = $asPaginate;
-
-        return new static();
-    }
-
-    /**
-     * Set attribute paginator
-     *
-     * @param string $attributeName Attribute Name
-     * @param array  $options       Format: ['perPage' => 15, 'currentPage' => 1, 'sortAttribute' => null, 'sortType' => null]
-     *
-     * @return static
-     */
-    public static function setAttributesPaginate(string $attributeName, array $options): static
-    {
-        static::$attributesPaginator[$attributeName] = $options;
 
         return new static();
     }

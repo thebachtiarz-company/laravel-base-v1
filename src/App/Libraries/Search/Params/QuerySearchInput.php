@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\App\Libraries\Search\Params;
 
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,6 +14,11 @@ class QuerySearchInput implements QuerySearchInputInterface
      * Model entity
      */
     protected Model $model;
+
+    /**
+     * Custom builder
+     */
+    protected Builder|null $customBuilder = null;
 
     /**
      * Custom paginate
@@ -62,6 +68,14 @@ class QuerySearchInput implements QuerySearchInputInterface
     public function getModel(): Model
     {
         return $this->model;
+    }
+
+    /**
+     * Get custom builder
+     */
+    public function getCustomBuilder(): Builder|null
+    {
+        return $this->customBuilder;
     }
 
     /**
@@ -125,6 +139,16 @@ class QuerySearchInput implements QuerySearchInputInterface
     }
 
     /**
+     * Set custom builder
+     */
+    public function setCustomBuilder(Builder $builder): self
+    {
+        $this->customBuilder = $builder;
+
+        return $this;
+    }
+
+    /**
      * Set custom paginate.
      *
      * Will send directly into search result.
@@ -147,25 +171,27 @@ class QuerySearchInput implements QuerySearchInputInterface
     }
 
     /**
-     * Set where conditions.
-     *
-     * Format: ['column', 'operator', 'condition', ?'and']
+     * Add where conditions.
      */
-    public function setWhereConditions(array $whereConditions): self
-    {
-        $this->whereConditions[] = $whereConditions;
+    public function addWhereConditions(
+        string $column,
+        string $operator,
+        mixed $condition,
+        string|null $iterator = 'and',
+    ): self {
+        $this->whereConditions[] = [$column, $operator, $condition, $iterator];
 
         return $this;
     }
 
     /**
-     * Set order conditions.
-     *
-     * Format: ['column', 'direction']|['column']
+     * Add order conditions.
      */
-    public function setOrderConditions(array $orderConditions): self
-    {
-        $this->orderConditions[] = $orderConditions;
+    public function addOrderConditions(
+        string $column,
+        string|null $direction = 'asc',
+    ): self {
+        $this->orderConditions[] = [$column, $direction];
 
         return $this;
     }
