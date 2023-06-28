@@ -18,14 +18,14 @@ interface CurlResponseInterface
     // ? Getter Modules
 
     /**
-     * Get status code
+     * Get http code
      */
-    public function getCode(): int|null;
+    public function getHttpCode(): int|null;
 
     /**
      * Get response status
      */
-    public function getStatus(): bool;
+    public function getStatus(): string;
 
     /**
      * Get response message
@@ -40,14 +40,14 @@ interface CurlResponseInterface
     // ? Setter Modules
 
     /**
-     * Set status code
+     * Set http code
      */
-    public function setCode(int|null $code): self;
+    public function setHttpCode(int|null $code): self;
 
     /**
      * Set response status
      */
-    public function setStatus(bool $status): self;
+    public function setStatus(string $status): self;
 
     /**
      * Set response message

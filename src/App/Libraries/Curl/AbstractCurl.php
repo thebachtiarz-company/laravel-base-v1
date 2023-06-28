@@ -7,6 +7,7 @@ namespace TheBachtiarz\Base\App\Libraries\Curl;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http as CURL;
+use TheBachtiarz\Base\App\Interfaces\ResponseInterface;
 use TheBachtiarz\Base\App\Libraries\Curl\Data\CurlResponse;
 use TheBachtiarz\Base\App\Libraries\Curl\Data\CurlResponseInterface;
 use TheBachtiarz\Base\App\Libraries\Curl\Log\LogLibrary;
@@ -121,7 +122,7 @@ abstract class AbstractCurl implements CurlInterface
      */
     protected function logInstance(): LogLibrary
     {
-        return app()->make(LogLibrary::class);
+        return app(LogLibrary::class);
     }
 
     // ? Private Methods
@@ -145,7 +146,7 @@ abstract class AbstractCurl implements CurlInterface
      */
     private function response(Response $response): CurlResponseInterface
     {
-        $result = new CurlResponse();
+        $result = app(CurlResponse::class);
         assert($result instanceof CurlResponseInterface);
 
         try {
@@ -154,21 +155,27 @@ abstract class AbstractCurl implements CurlInterface
             /**
              * If there is validation errors
              */
-            throw_if(in_array('errors', array_keys($response)), 'Exception', $response['message']);
+            throw_if(in_array('errors', array_keys($response)), 'Exception', $response[ResponseInterface::ATTRIBUTE_MESSAGE]);
 
             /**
              * If there is no 'status' indexes. Assume there is an error in the result.
              */
-            throw_if(! @$response['status'], 'Exception', $response['message']);
+            throw_if(
+                ! @$response[ResponseInterface::ATTRIBUTE_STATUS],
+                'Exception',
+                $response[ResponseInterface::ATTRIBUTE_MESSAGE],
+            );
 
             /**
              * If return status is not success
              */
-            throw_if($response['status'] !== 'success', 'Exception', $response['message']);
+            throw_if(
+                $response[ResponseInterface::ATTRIBUTE_STATUS] !== 'success',
+                'Exception',
+                $response[ResponseInterface::ATTRIBUTE_MESSAGE],
+            );
 
-            $result->setStatus($response['status'] === 'success');
-            $result->setMessage($response['message']);
-            $result->setData($response['data']);
+            $result = new CurlResponse($response);
         } catch (Throwable $th) {
             $this->logInstance()->log($th);
 

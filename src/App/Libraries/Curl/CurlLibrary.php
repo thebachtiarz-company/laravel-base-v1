@@ -11,7 +11,9 @@ use function assert;
 
 class CurlLibrary
 {
-    /** @var array */
+    /**
+     * Classes entity
+     */
     protected array $classEntity = [];
 
     // ? Public Methods

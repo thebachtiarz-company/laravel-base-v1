@@ -18,18 +18,11 @@ abstract class AbstractController extends Controller
     use ValidatesRequests;
 
     /**
-     * Response Helper
-     *
-     * @var ResponseHelper
-     */
-    protected static $responseHelper = ResponseHelper::class;
-
-    /**
      * Constructor
      */
     public function __construct()
     {
-        static::$responseHelper::init();
+        ResponseHelper::init();
     }
 
     /**
@@ -40,10 +33,18 @@ abstract class AbstractController extends Controller
     }
 
     /**
+     * Call response helper
+     */
+    protected function response(): ResponseHelper
+    {
+        return new ResponseHelper();
+    }
+
+    /**
      * Get response result
      */
     protected function getResult(): JsonResponse
     {
-        return static::$responseHelper::getJsonResult();
+        return $this->response()::getJsonResult();
     }
 }

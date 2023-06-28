@@ -13,21 +13,22 @@ use function compact;
 abstract class AbstractService
 {
     /**
-     * Response Helper
-     *
-     * @var ResponseHelper
-     */
-    protected static $responseHelper = ResponseHelper::class;
-
-    /**
      * Set Response result
      */
-    protected bool $responseResult = true;
+    protected bool $showResponseResult = true;
 
     /**
      * Write any log
      */
     protected bool $writeLog = true;
+
+    /**
+     * Call response helper
+     */
+    protected function response(): ResponseHelper
+    {
+        return new ResponseHelper();
+    }
 
     /**
      * Set service result response
@@ -45,11 +46,11 @@ abstract class AbstractService
         string $status = 'success',
         int $httpCode = 200,
     ): void {
-        if (! $this->responseResult) {
+        if (! $this->showResponseResult) {
             return;
         }
 
-        static::$responseHelper::setResponseData(message: $message, data: $data, force: $force)
+        $this->response()::setResponseData(message: $message, data: $data, force: $force)
             ->setStatus($status)
             ->setHttpCode($httpCode);
     }
@@ -93,7 +94,7 @@ abstract class AbstractService
      */
     public function hideResponseResult(): static
     {
-        $this->responseResult = false;
+        $this->showResponseResult = false;
 
         return $this;
     }

@@ -28,7 +28,6 @@ class ConfigService extends AbstractService
     public function __construct(
         protected ConfigRepository $configRepository,
     ) {
-        $this->configRepository = $configRepository;
     }
 
     // ? Public Methods

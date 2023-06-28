@@ -16,8 +16,6 @@ abstract class AbstractSearch implements AbstractSearchInterface
         protected PaginateResult $paginateResult,
         protected SearchResultOutput $searchResultOutput,
     ) {
-        $this->paginateResult     = $paginateResult;
-        $this->searchResultOutput = $searchResultOutput;
     }
 
     // ? Public Methods

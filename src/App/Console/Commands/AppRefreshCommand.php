@@ -31,12 +31,6 @@ class AppRefreshCommand extends Command
         $this->description = 'Refresh the app for clean all cache etc.';
 
         parent::__construct();
-
-        $this->composer      = $composer;
-        $this->configService = $configService;
-        $this->cacheLibrary  = $cacheLibrary;
-        $this->commandHelper = $commandHelper;
-        $this->logLibrary    = $logLibrary;
     }
 
     /**

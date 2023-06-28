@@ -4,27 +4,28 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\App\Libraries\Curl\Data;
 
+use TheBachtiarz\Base\App\Interfaces\ResponseInterface;
 use Throwable;
 
 class CurlResponse implements CurlResponseInterface
 {
     /**
-     * Status code
+     * Response http code
      */
-    private int|null $code = null;
+    private int|null $httpCode = 200;
 
     /**
-     * Status
+     * Response status
      */
-    private bool $status = false;
+    private string $status = 'error';
 
     /**
-     * Message
+     * Response message
      */
     private string $message = '';
 
     /**
-     * Data
+     * Response data
      */
     private mixed $data = null;
 
@@ -35,10 +36,10 @@ class CurlResponse implements CurlResponseInterface
      */
     public function __construct(array $responseData = [])
     {
-        $this->setStatus(@$responseData['status'] ?? $this->status);
-        $this->setMessage(@$responseData['message'] ?? $this->message);
-        $this->setData(@$responseData['data'] ?? $this->data);
-        $this->setCode(@$responseData['code'] ?? $this->code);
+        $this->setHttpCode(@$responseData[ResponseInterface::ATTRIBUTE_HTTPCODE] ?? $this->httpCode);
+        $this->setStatus(@$responseData[ResponseInterface::ATTRIBUTE_STATUS] ?? $this->status);
+        $this->setMessage(@$responseData[ResponseInterface::ATTRIBUTE_MESSAGE] ?? $this->message);
+        $this->setData(@$responseData[ResponseInterface::ATTRIBUTE_DATA] ?? $this->data);
     }
 
     // ? Public Methods
@@ -49,22 +50,22 @@ class CurlResponse implements CurlResponseInterface
     public function toArray(): array
     {
         return [
-            'code' => $this->getCode(),
-            'status' => $this->getStatus(),
-            'message' => $this->getMessage(),
-            'data' => $this->getData(),
+            ResponseInterface::ATTRIBUTE_HTTPCODE => $this->getHttpCode(),
+            ResponseInterface::ATTRIBUTE_STATUS => $this->getStatus(),
+            ResponseInterface::ATTRIBUTE_MESSAGE => $this->getMessage(),
+            ResponseInterface::ATTRIBUTE_DATA => $this->getData(),
         ];
     }
 
     // ? Private Methods
 
 
-    public function getCode(): int|null
+    public function getHttpCode(): int|null
     {
-        return $this->code;
+        return $this->httpCode;
     }
 
-    public function getStatus(): bool
+    public function getStatus(): string
     {
         return $this->status;
     }
@@ -83,14 +84,14 @@ class CurlResponse implements CurlResponseInterface
         }
     }
 
-    public function setCode(int|null $code): self
+    public function setHttpCode(int|null $code): self
     {
-        $this->code = $code;
+        $this->httpCode = $code;
 
         return $this;
     }
 
-    public function setStatus(bool $status): self
+    public function setStatus(string $status): self
     {
         $this->status = $status;
 

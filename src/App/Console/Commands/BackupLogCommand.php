@@ -29,9 +29,6 @@ class BackupLogCommand extends Command
         $this->description = 'Backup application logger files';
 
         parent::__construct();
-
-        $this->commandHelper = $commandHelper;
-        $this->logLibrary    = $logLibrary;
     }
 
     /**

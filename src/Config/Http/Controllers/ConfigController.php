@@ -17,8 +17,6 @@ class ConfigController extends AbstractController
         protected ConfigService $configService,
     ) {
         parent::__construct();
-
-        $this->configService = $configService;
     }
 
     /**
