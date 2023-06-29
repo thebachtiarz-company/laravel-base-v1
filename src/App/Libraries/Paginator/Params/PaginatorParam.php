@@ -83,9 +83,21 @@ class PaginatorParam
      *
      * @return array
      */
-    public static function getResultSortOptions(string|null $attributeName = null): array
+    public static function getResultSortOptions(string|null $attributeName = null, bool|null $asMultiple = false): array
     {
-        return @static::$resultSortOptions[$attributeName] ?? static::$resultSortOptions;
+        $result = @static::$resultSortOptions[$attributeName] ?? static::$resultSortOptions;
+
+        if (! $attributeName && $asMultiple) {
+            $reFormat = [];
+
+            foreach ($result as $attribute => $type) {
+                $reFormat[] = (new SortAttributes())->setSortAttribute($attribute)->setSortType($type)->toArray();
+            }
+
+            $result = $reFormat;
+        }
+
+        return $result;
     }
 
     /**
@@ -179,10 +191,9 @@ class PaginatorParam
     public static function setResultSortOptions(array $sortOptions = []): static
     {
         foreach ($sortOptions ?? [] as $key => $option) {
-            $attributeName = $option['sortAttribute'];
-            $sortType      = @$option['sortType'] ?? 'ASC';
+            $sort = new SortAttributes($option);
 
-            static::addResultSortOption(attributeName: $attributeName, sortType: $sortType);
+            static::addResultSortOption(attributeName: $sort->getSortAttribute(), sortType: $sort->getSortType());
         }
 
         return new static();
@@ -199,7 +210,7 @@ class PaginatorParam
     public static function addAttributePaginateOption(string $attributeName, array $attributeOption): static
     {
         static::setAsPaginate(false);
-        static::$attributesPaginateOptions[$attributeName] = $attributeOption;
+        static::$attributesPaginateOptions[$attributeName] = (new PaginateAttributes($attributeOption))->toArray();
 
         return new static();
     }

@@ -36,7 +36,7 @@ class QuerySearch extends AbstractSearch implements QuerySearchInterface
             if (count($querySearchInputInterface->getOrderConditions())) {
                 foreach ($querySearchInputInterface->getOrderConditions() as $key => $orderCondition) {
                     $column    = $orderCondition[0];
-                    $direction = @$orderCondition[1] ?? 'asc';
+                    $direction = @$orderCondition[1] ?? 'ASC';
 
                     $prepare = $prepare->orderBy(column: $column, direction: $direction);
                 }

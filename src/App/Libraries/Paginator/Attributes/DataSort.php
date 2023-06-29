@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\App\Libraries\Paginator\Attributes;
 
+use Illuminate\Support\Str;
 use TheBachtiarz\Base\App\Libraries\Paginator\AbstractPaginator;
 
 use function sprintf;
@@ -32,7 +33,7 @@ final class DataSort extends AbstractPaginator
         $result = [];
 
         foreach ($this->sortAttribute ?? [] as $attribute => $type) {
-            $result[] = sprintf('%s_%s', $attribute, $type);
+            $result[] = Str::slug(title: sprintf('%s %s', $attribute, $type), separator: '_');
         }
 
         return $result;

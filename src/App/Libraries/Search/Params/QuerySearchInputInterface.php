@@ -86,7 +86,7 @@ interface QuerySearchInputInterface
     /**
      * Add order conditions.
      */
-    public function addOrderConditions(string $column, string|null $direction = 'asc'): self;
+    public function addOrderConditions(string $column, string|null $direction = 'ASC'): self;
 
     /**
      * Set per page

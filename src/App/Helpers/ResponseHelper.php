@@ -6,7 +6,9 @@ namespace TheBachtiarz\Base\App\Helpers;
 
 use Carbon\CarbonInterval;
 use Illuminate\Http\JsonResponse;
+use TheBachtiarz\Base\App\Interfaces\ResponseInterface;
 use TheBachtiarz\Base\App\Libraries\Paginator\PaginateResult;
+use TheBachtiarz\Base\App\Libraries\Paginator\Params\PaginateAttributes;
 use TheBachtiarz\Base\App\Libraries\Paginator\Params\PaginatorParam;
 use Throwable;
 
@@ -142,11 +144,13 @@ class ResponseHelper
             $customAttributeValues = app(PaginateResult::class);
             assert($customAttributeValues instanceof PaginateResult);
 
+            $paginateAttributes = (new PaginateAttributes($options));
+
             $customAttributeValues->execute(
                 resultData: $originalAttributeValues,
-                perPage: @$options['perPage'] ?? 15,
-                currentPage: @$options['currentPage'] ?? 1,
-                sortAttributes: @$options ?? [],
+                perPage: $paginateAttributes->getPerPage(),
+                currentPage: $paginateAttributes->getCurrentPage(),
+                sortAttributes: $paginateAttributes->getSortOptions(),
             );
 
             static::$data[$attribute] = $customAttributeValues->toArray();
@@ -165,11 +169,11 @@ class ResponseHelper
     private static function createResult(): array
     {
         return [
-            'status' => static::$status,
-            'http_code' => static::$httpCode,
-            'message' => static::$message,
-            'execute_time' => static::getExecuteTime(),
-            'data' => static::getDataResolver(),
+            ResponseInterface::ATTRIBUTE_STATUS => static::$status,
+            ResponseInterface::ATTRIBUTE_HTTPCODE => static::$httpCode,
+            ResponseInterface::ATTRIBUTE_MESSAGE => static::$message,
+            ResponseInterface::ATTRIBUTE_EXECUTETIME => static::getExecuteTime(),
+            ResponseInterface::ATTRIBUTE_DATA => static::getDataResolver(),
         ];
     }
 
@@ -181,9 +185,9 @@ class ResponseHelper
     private static function getExecuteTime(): array
     {
         return [
-            'start' => static::$executeStart,
-            'finish' => static::$executeFinish ?? static::setExecuteFinish(CarbonHelper::anyConvDateToTimestamp())::$executeFinish,
-            'duration' => static::getExecuteDuration(),
+            ResponseInterface::ATTRIBUTE_EXECUTETIME_START => static::$executeStart,
+            ResponseInterface::ATTRIBUTE_EXECUTETIME_FINISH => static::$executeFinish ?? static::setExecuteFinish(CarbonHelper::anyConvDateToTimestamp())::$executeFinish,
+            ResponseInterface::ATTRIBUTE_EXECUTETIME_DURATION => static::getExecuteDuration(),
         ];
     }
 
@@ -201,17 +205,11 @@ class ResponseHelper
                 $paginate = app(PaginateResult::class);
                 assert($paginate instanceof PaginateResult);
 
-                $sortAttributes = [];
-
-                foreach (PaginatorParam::getResultSortOptions() ?? [] as $attribute => $type) {
-                    $sortAttributes[] = ['sortAttribute' => $attribute, 'sortType' => $type];
-                }
-
                 return $paginate->execute(
                     resultData: static::$data,
                     perPage: PaginatorParam::getPerPage(),
                     currentPage: PaginatorParam::getCurrentPage(),
-                    sortAttributes: $sortAttributes,
+                    sortAttributes: PaginatorParam::getResultSortOptions(asMultiple: true),
                 )->toArray();
             }
 

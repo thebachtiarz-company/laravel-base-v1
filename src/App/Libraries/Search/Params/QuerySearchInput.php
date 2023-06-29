@@ -189,7 +189,7 @@ class QuerySearchInput implements QuerySearchInputInterface
      */
     public function addOrderConditions(
         string $column,
-        string|null $direction = 'asc',
+        string|null $direction = 'ASC',
     ): self {
         $this->orderConditions[] = [$column, $direction];
 

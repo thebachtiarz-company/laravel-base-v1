@@ -6,6 +6,7 @@ namespace TheBachtiarz\Base\App\Libraries\Paginator;
 
 use TheBachtiarz\Base\App\Libraries\Paginator\Attributes\DataSort;
 use TheBachtiarz\Base\App\Libraries\Paginator\Attributes\PageInfo;
+use TheBachtiarz\Base\App\Libraries\Paginator\Params\SortAttributes;
 use Throwable;
 
 use function mb_strlen;
@@ -144,13 +145,15 @@ abstract class AbstractPaginator implements AbstractPaginatorInterface
     {
         foreach ($attributeSorts ?? [] as $key => $option) {
             try {
-                if (! mb_strlen($option['sortAttribute'])) {
+                $sortAttributes = new SortAttributes($option);
+
+                if (! mb_strlen($sortAttributes->getSortAttribute())) {
                     continue;
                 }
 
                 $this->dataSort->addSortAttribute(
-                    attribute: $option['sortAttribute'],
-                    type: @$option['sortType'] ?? 'ASC',
+                    attribute: $sortAttributes->getSortAttribute(),
+                    type: $sortAttributes->getSortType(),
                 );
             } catch (Throwable) {
             }
