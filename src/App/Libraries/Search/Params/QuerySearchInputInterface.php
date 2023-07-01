@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\App\Libraries\Search\Params;
 
-use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Contracts\Database\Query\Builder as ContractsBuilder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,7 +22,7 @@ interface QuerySearchInputInterface
     /**
      * Get custom builder
      */
-    public function getCustomBuilder(): Builder|null;
+    public function getCustomBuilder(): ContractsBuilder|null;
 
     /**
      * Get custom paginate
@@ -64,7 +64,7 @@ interface QuerySearchInputInterface
     /**
      * Set custom builder
      */
-    public function setCustomBuilder(Builder $builder): self;
+    public function setCustomBuilder(ContractsBuilder $builder): self;
 
     /**
      * Set custom paginate.

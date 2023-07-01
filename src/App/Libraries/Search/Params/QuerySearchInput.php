@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\App\Libraries\Search\Params;
 
-use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Contracts\Database\Query\Builder as ContractsBuilder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+
+use function assert;
 
 class QuerySearchInput implements QuerySearchInputInterface
 {
@@ -18,7 +22,7 @@ class QuerySearchInput implements QuerySearchInputInterface
     /**
      * Custom builder
      */
-    protected Builder|null $customBuilder = null;
+    protected ContractsBuilder|null $customBuilder = null;
 
     /**
      * Custom paginate
@@ -73,7 +77,7 @@ class QuerySearchInput implements QuerySearchInputInterface
     /**
      * Get custom builder
      */
-    public function getCustomBuilder(): Builder|null
+    public function getCustomBuilder(): ContractsBuilder|null
     {
         return $this->customBuilder;
     }
@@ -141,9 +145,12 @@ class QuerySearchInput implements QuerySearchInputInterface
     /**
      * Set custom builder
      */
-    public function setCustomBuilder(Builder $builder): self
+    public function setCustomBuilder(ContractsBuilder $builder): self
     {
+        assert($builder instanceof EloquentBuilder || $builder instanceof QueryBuilder);
+
         $this->customBuilder = $builder;
+        $this->model         = $builder->getModel();
 
         return $this;
     }

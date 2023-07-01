@@ -13,7 +13,7 @@ class CacheHelper extends Cache
     /**
      * Check is cache available by key
      */
-    public static function has(string $cacheName): bool
+    public static function hasCache(string $cacheName): bool
     {
         return self::has($cacheName);
     }
@@ -21,7 +21,7 @@ class CacheHelper extends Cache
     /**
      * Get cache by key
      */
-    public static function get(string $cacheName): mixed
+    public static function getCache(string $cacheName): mixed
     {
         return self::get($cacheName);
     }
@@ -29,7 +29,7 @@ class CacheHelper extends Cache
     /**
      * Set cache data forever
      */
-    public static function set(string $cacheName, mixed $value): bool
+    public static function setCache(string $cacheName, mixed $value): bool
     {
         return self::forever($cacheName, $value);
     }
@@ -39,15 +39,18 @@ class CacheHelper extends Cache
      *
      * @param DateTimeInterface|DateInterval|int $ttl default: 60 seconds
      */
-    public static function setTemporary(string $cacheName, mixed $value, DateTimeInterface|DateInterval|int $ttl = 60): bool
-    {
+    public static function setTemporaryCache(
+        string $cacheName,
+        mixed $value,
+        DateTimeInterface|DateInterval|int $ttl = 60,
+    ): bool {
         return self::put($cacheName, $value, $ttl);
     }
 
     /**
      * Delete a cache data by key
      */
-    public static function delete(string $cacheName): bool
+    public static function deleteCache(string $cacheName): bool
     {
         return self::forget($cacheName);
     }
@@ -55,7 +58,7 @@ class CacheHelper extends Cache
     /**
      * Erase/Remove all cache data
      */
-    public static function erase(): bool
+    public static function eraseCaches(): bool
     {
         return self::flush();
     }

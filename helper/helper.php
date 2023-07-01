@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
+use TheBachtiarz\Base\App\Helpers\CacheHelper;
 use TheBachtiarz\Base\BaseConfigInterface;
 use TheBachtiarz\Base\Config\Services\ConfigService;
 
@@ -67,5 +70,50 @@ if (! function_exists('tbdirlocation')) {
         $subDir = $subDir ? "/{$subDir}" : '';
 
         return base_path(BaseConfigInterface::DIRECTORY_PATH) . $subDir;
+    }
+}
+
+if (! function_exists('tbgetmodelcolumns')) {
+    /**
+     * Get columns table from model
+     */
+    function tbgetmodelcolumns(Model $model, bool|null $refreshCache = false): array
+    {
+        $table     = $model->getTable();
+        $cacheName = sprintf('table_%s_columns', $table);
+
+        $iterable = 0;
+        $result   = [];
+
+        if ($refreshCache) {
+            goto PROCESS_GET_COLUMNS;
+        }
+
+        PROCESS_CHECK_CACHE:
+        $isCacheExist = CacheHelper::hasCache(cacheName: $cacheName);
+        if (! $isCacheExist) {
+            goto PROCESS_GET_COLUMNS;
+        }
+
+        PROCESS_GET_CACHE:
+        $result = CacheHelper::getCache(cacheName: $cacheName);
+        goto PROCESS_CHECK_COLUMNS;
+
+        PROCESS_GET_COLUMNS:
+        $result = collect(value: Schema::getColumnListing($table))->toArray();
+
+        PROCESS_SET_CACHE:
+        CacheHelper::setCache(cacheName: $cacheName, value: $result);
+        goto PROCESS_RETURN_RESULT;
+
+        PROCESS_CHECK_COLUMNS:
+        if ($iterable < 1 && count(value: $result) < 1) {
+            $iterable++;
+            goto PROCESS_GET_COLUMNS;
+        }
+
+        PROCESS_RETURN_RESULT:
+
+        return $result;
     }
 }
