@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+use TheBachtiarz\Base\BaseConfigInterface;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -9,7 +13,7 @@ return [
     | Here your application name are stored.
     |
     */
-    'app_name' => "",
+    'app_name' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -19,7 +23,7 @@ return [
     | Here your application url are stored.
     |
     */
-    'app_url' => "",
+    'app_url' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -30,7 +34,7 @@ return [
     | @see \DateTimeZone::listIdentifiers()
     |
     */
-    'app_timezone' => "",
+    'app_timezone' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -40,7 +44,7 @@ return [
     | Here your application key are stored.
     |
     */
-    'app_key' => "",
+    'app_key' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -53,7 +57,7 @@ return [
     | ex: {{domain}}/{{thebachtiarz}}/---
     |
     */
-    'app_prefix' => "thebachtiarz",
+    'app_prefix' => 'thebachtiarz',
 
     /*
     |--------------------------------------------------------------------------
@@ -63,7 +67,7 @@ return [
     | Here you can specify the mode to allow the system to write logs.
     |
     */
-    'logger_mode' => ["local", "developer", "production"],
+    'logger_mode' => ['local', 'developer', 'production'],
 
     /*
     |--------------------------------------------------------------------------
@@ -77,13 +81,15 @@ return [
     'app_refresh_artisan_commands_before' => [
         [
             'command' => 'view:clear',
-            'message' => '======> Compiled views cleared!'
-        ], [
+            'message' => '======> Compiled views cleared!',
+        ],
+        [
             'command' => 'config:clear',
-            'message' => '======> Configuration cache cleared!'
-        ], [
+            'message' => '======> Configuration cache cleared!',
+        ],
+        [
             'command' => 'cache:clear',
-            'message' => '======> Application cache cleared!'
+            'message' => '======> Application cache cleared!',
         ],
     ],
 
@@ -99,8 +105,8 @@ return [
     'app_refresh_artisan_commands_after' => [
         [
             'command' => 'config:cache',
-            'message' => '======> Configuration cached successfully!'
-        ]
+            'message' => '======> Configuration cached successfully!',
+        ],
     ],
 
     /*
@@ -137,7 +143,7 @@ return [
     | Here all your config are registered.
     |
     */
-    \TheBachtiarz\Base\BaseConfigInterface::CONFIG_REGISTERED => [
-        \TheBachtiarz\Base\BaseConfigInterface::CONFIG_NAME,
+    BaseConfigInterface::CONFIG_REGISTERED => [
+        BaseConfigInterface::CONFIG_NAME,
     ],
 ];
