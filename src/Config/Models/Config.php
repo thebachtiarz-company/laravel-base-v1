@@ -4,45 +4,56 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\Config\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use TheBachtiarz\Base\App\Models\AbstractModel;
 use TheBachtiarz\Base\Config\Interfaces\ConfigInterface;
 use TheBachtiarz\Base\Config\Traits\Model\ConfigScopeTrait;
 
-class Config extends Model implements ConfigInterface
+class Config extends AbstractModel implements ConfigInterface
 {
     use ConfigScopeTrait;
 
-    protected $table = self::TABLE_NAME;
-
-    protected $fillable = self::ATTRIBUTES_FILLABLE;
-
-    public function getId(): int|null
+    /**
+     * Constructor
+     */
+    public function __construct(array $attributes = [])
     {
-        return $this->__get(self::ATTRIBUTE_ID);
+        $this->setTable(self::TABLE_NAME);
+        $this->fillable(self::ATTRIBUTE_FILLABLE);
+
+        parent::__construct($attributes);
     }
 
+    // ? Getter Modules
+
+    /**
+     * Get path
+     */
     public function getPath(): string|null
     {
         return $this->__get(self::ATTRIBUTE_PATH);
     }
 
+    /**
+     * Get is encrypt
+     */
     public function getIsEncrypt(): bool|null
     {
         return $this->__get(self::ATTRIBUTE_ISENCRYPT);
     }
 
+    /**
+     * Get value
+     */
     public function getValue(): mixed
     {
         return $this->__get(self::ATTRIBUTE_VALUE);
     }
 
-    public function setId(int $id): self
-    {
-        $this->__set(self::ATTRIBUTE_ID, $id);
+    // ? Setter Modules
 
-        return $this;
-    }
-
+    /**
+     * Set path
+     */
     public function setPath(string $path): self
     {
         $this->__set(self::ATTRIBUTE_PATH, $path);
@@ -50,6 +61,9 @@ class Config extends Model implements ConfigInterface
         return $this;
     }
 
+    /**
+     * Set is encrypt
+     */
     public function setIsEncrypt(bool $isEncrypt): self
     {
         $this->__set(self::ATTRIBUTE_ISENCRYPT, $isEncrypt);
@@ -57,6 +71,9 @@ class Config extends Model implements ConfigInterface
         return $this;
     }
 
+    /**
+     * Set value
+     */
     public function setValue(mixed $value): self
     {
         $this->__set(self::ATTRIBUTE_VALUE, $value);

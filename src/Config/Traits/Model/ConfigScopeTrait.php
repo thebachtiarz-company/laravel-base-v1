@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\Config\Traits\Model;
 
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\DB;
 use TheBachtiarz\Base\Config\Interfaces\ConfigInterface;
 
@@ -16,7 +18,7 @@ trait ConfigScopeTrait
     /**
      * Get by path
      */
-    public function scopeGetByPath(Builder $builder, string $path): Builder
+    public function scopeGetByPath(EloquentBuilder|QueryBuilder $builder, string $path): BuilderContract
     {
         $attribute = ConfigInterface::ATTRIBUTE_PATH;
 

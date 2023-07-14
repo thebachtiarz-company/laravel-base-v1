@@ -10,16 +10,28 @@ use TheBachtiarz\Base\App\Repositories\AbstractRepository;
 use TheBachtiarz\Base\Config\Interfaces\ConfigInterface;
 use TheBachtiarz\Base\Config\Models\Config;
 
+use function app;
 use function assert;
 
 class ConfigRepository extends AbstractRepository
 {
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->modelEntity = app(Config::class);
+
+        parent::__construct();
+    }
+
     /**
      * Get by id
      */
     public function getById(int $id): ConfigInterface
     {
         $config = Config::find($id);
+        assert($config instanceof ConfigInterface || $config === null);
 
         if (! $config) {
             throw new ModelNotFoundException("Config with id '$id' not found");
@@ -34,6 +46,7 @@ class ConfigRepository extends AbstractRepository
     public function getByPath(string $path): ConfigInterface
     {
         $config = Config::getByPath($path)->first();
+        assert($config instanceof ConfigInterface || $config === null);
 
         if (! $config) {
             throw new ModelNotFoundException("Config with path '$path' not found");

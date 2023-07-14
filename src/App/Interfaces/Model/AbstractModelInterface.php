@@ -13,16 +13,12 @@ interface AbstractModelInterface
     // ? Public Methods
 
     /**
-     * Get data.
-     *
-     * Get by attribute or return whole data.
+     * Get data
      */
     public function getData(string $attribute): mixed;
 
     /**
-     * Set data.
-     *
-     * Set data using attribute and value exist.
+     * Set data
      *
      * @return static
      */

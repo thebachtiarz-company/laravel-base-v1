@@ -73,9 +73,9 @@ class ResponseHelper
      */
     public static function getJsonResult(): JsonResponse
     {
-        $result = static::createResult();
-
-        return (new JsonResponse())->setData($result);
+        return (new JsonResponse())
+            ->setStatusCode(code: static::getHttpCode())
+            ->setData(data: static::createResult());
     }
 
     /**

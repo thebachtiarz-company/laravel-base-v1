@@ -16,6 +16,7 @@ use function array_keys;
 use function assert;
 use function config;
 use function gettype;
+use function json_decode;
 use function json_encode;
 use function sprintf;
 use function tbbaseconfig;
@@ -67,6 +68,13 @@ class ConfigService extends AbstractService
             }
         } catch (Throwable $th) {
             $errorMessage = $th->getMessage();
+        }
+
+        try {
+            if (@json_decode(json: $result)) {
+                $result = json_decode(json: $result, associative: true);
+            }
+        } catch (Throwable) {
         }
 
         $this->setResponseData($errorMessage ?? 'Config value', $result);

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\Config\Interfaces;
 
-interface ConfigInterface
+use TheBachtiarz\Base\App\Interfaces\Model\AbstractModelInterface;
+
+interface ConfigInterface extends AbstractModelInterface
 {
     /**
      * Model table name
@@ -14,23 +16,17 @@ interface ConfigInterface
     /**
      * Attributes fillable
      */
-    public const ATTRIBUTES_FILLABLE = [
+    public const ATTRIBUTE_FILLABLE = [
         self::ATTRIBUTE_PATH,
         self::ATTRIBUTE_ISENCRYPT,
         self::ATTRIBUTE_VALUE,
     ];
 
-    public const ATTRIBUTE_ID        = 'id';
     public const ATTRIBUTE_PATH      = 'path';
     public const ATTRIBUTE_ISENCRYPT = 'is_encrypt';
     public const ATTRIBUTE_VALUE     = 'value';
 
     // ? Getter Modules
-
-    /**
-     * Get id
-     */
-    public function getId(): int|null;
 
     /**
      * Get path
@@ -48,11 +44,6 @@ interface ConfigInterface
     public function getValue(): mixed;
 
     // ? Setter Modules
-
-    /**
-     * Set id
-     */
-    public function setId(int $id): self;
 
     /**
      * Set path
