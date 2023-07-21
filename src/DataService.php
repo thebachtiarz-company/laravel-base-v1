@@ -27,15 +27,15 @@ class DataService
             'app.timezone' => tbbaseconfig(AppConfigInterface::CONFIG_APP_TIMEZONE, false),
             'app.key' => tbbaseconfig(AppConfigInterface::CONFIG_APP_KEY),
         ];
-        // $providers = config('app.providers');
-        // $registerConfig[] = [
-        //     'app.providers' => array_merge(
-        //         $providers,
-        //         [
-        //             \TheBachtiarz\Toolkit\Backend\RouteServiceProvider::class
-        //         ]
-        //     )
-        // ];
+
+        // ! Providers
+        $providers        = config('app.providers');
+        $registerConfig[] = [
+            'app.providers' => array_merge(
+                $providers,
+                [BaseRouteServiceProvider::class],
+            ),
+        ];
 
         // ! Cache
         $registerConfig[] = ['cache.default' => 'database'];

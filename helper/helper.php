@@ -117,3 +117,18 @@ if (! function_exists('tbgetmodelcolumns')) {
         return $result;
     }
 }
+
+if (! function_exists('tbbaserestapipath')) {
+    /**
+     * Base rest api path
+     */
+    function tbbaserestapipath(string $type): string
+    {
+        $package = match ($type) {
+            'base' => 'App',
+            'config' => 'Config',
+        };
+
+        return base_path("vendor/thebachtiarz-company/laravel-auth-v2/src/$package/routes/rest.php");
+    }
+}

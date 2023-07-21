@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TheBachtiarz\Base\App\Interfaces\Model;
+namespace TheBachtiarz\Base\App\Interfaces\Models;
+
+use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 
 interface AbstractModelInterface
 {
@@ -63,4 +67,27 @@ interface AbstractModelInterface
      * @return static
      */
     public function setUpdatedAt(string $updatedAt);
+
+    // ? Map Modules
+
+    /**
+     * Get entity simple map
+     *
+     * @param array $attributes
+     *
+     * @return array
+     */
+    public function simpleListMap(array $attributes = []): array;
+
+    // ? Scope Modules
+
+    /**
+     * Get entity by attribute
+     */
+    public function scopeGetByAttribute(
+        EloquentBuilder|QueryBuilder $builder,
+        string $column,
+        mixed $value,
+        string $operator = '=',
+    ): BuilderContract;
 }

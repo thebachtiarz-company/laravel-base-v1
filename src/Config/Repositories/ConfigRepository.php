@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\Config\Repositories;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Str;
+use TheBachtiarz\Base\App\Interfaces\Repositories\AbstractRepositoryInterface;
 use TheBachtiarz\Base\App\Repositories\AbstractRepository;
 use TheBachtiarz\Base\Config\Interfaces\ConfigInterface;
 use TheBachtiarz\Base\Config\Models\Config;
@@ -13,7 +14,7 @@ use TheBachtiarz\Base\Config\Models\Config;
 use function app;
 use function assert;
 
-class ConfigRepository extends AbstractRepository
+class ConfigRepository extends AbstractRepository implements AbstractRepositoryInterface
 {
     /**
      * Constructor
@@ -25,26 +26,15 @@ class ConfigRepository extends AbstractRepository
         parent::__construct();
     }
 
-    /**
-     * Get by id
-     */
-    public function getById(int $id): ConfigInterface
-    {
-        $config = Config::find($id);
-        assert($config instanceof ConfigInterface || $config === null);
-
-        if (! $config) {
-            throw new ModelNotFoundException("Config with id '$id' not found");
-        }
-
-        return $config;
-    }
+    // ? Public Methods
 
     /**
      * Get by path
      */
     public function getByPath(string $path): ConfigInterface
     {
+        $path = Str::slug(title: $path, separator: '.');
+
         $config = Config::getByPath($path)->first();
         assert($config instanceof ConfigInterface || $config === null);
 
@@ -56,55 +46,24 @@ class ConfigRepository extends AbstractRepository
     }
 
     /**
-     * Create new config
-     */
-    public function create(ConfigInterface $configInterface): ConfigInterface
-    {
-        /** @var Model $configInterface */
-        $create = $this->createFromModel($configInterface);
-        assert($create instanceof ConfigInterface);
-
-        if (! $create) {
-            throw new ModelNotFoundException('Failed to create new config');
-        }
-
-        return $create;
-    }
-
-    /**
-     * Save current config
-     */
-    public function save(ConfigInterface $configInterface): ConfigInterface
-    {
-        /** @var Model|ConfigInterface $configInterface */
-        $config = $configInterface->save();
-
-        if (! $config) {
-            throw new ModelNotFoundException('Failed to savecurrent config');
-        }
-
-        return $configInterface;
-    }
-
-    /**
-     * Delete by id
-     */
-    public function deleteById(int $id): bool
-    {
-        $config = $this->getById($id);
-        assert($config instanceof Model);
-
-        return $config->delete();
-    }
-
-    /**
      * Delete by path
      */
     public function deleteByPath(string $path): bool
     {
         $config = $this->getByPath($path);
-        assert($config instanceof Model);
 
-        return $config->delete();
+        return $this->deleteById($config->getId());
+    }
+
+    // ? Protected Methods
+
+    protected function getByIdErrorMessage(): string|null
+    {
+        return "Config with id '%s' not found";
+    }
+
+    protected function createOrUpdateErrorMessage(): string|null
+    {
+        return 'Failed to %s config';
     }
 }

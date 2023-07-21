@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TheBachtiarz\Base\App\Controllers;
+namespace TheBachtiarz\Base\App\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -10,8 +10,9 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use TheBachtiarz\Base\App\Helpers\ResponseHelper;
+use TheBachtiarz\Base\App\Interfaces\Http\Controllers\AbstractControllerInterface;
 
-abstract class AbstractController extends Controller
+abstract class AbstractController extends Controller implements AbstractControllerInterface
 {
     use AuthorizesRequests;
     use DispatchesJobs;
@@ -22,7 +23,7 @@ abstract class AbstractController extends Controller
      */
     public function __construct()
     {
-        ResponseHelper::init();
+        $this->response()::init();
     }
 
     /**
@@ -30,7 +31,12 @@ abstract class AbstractController extends Controller
      */
     public function __destruct()
     {
+        $this->response()::end();
     }
+
+    // ? Public Methods
+
+    // ? Protected Methods
 
     /**
      * Call response helper
@@ -47,4 +53,10 @@ abstract class AbstractController extends Controller
     {
         return $this->response()::getJsonResult();
     }
+
+    // ? Private Methods
+
+    // ? Getter Modules
+
+    // ? Setter Modules
 }

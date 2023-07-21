@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TheBachtiarz\Base\App\Http\Requests\Rule;
+namespace TheBachtiarz\Base\App\Http\Requests\Rules;
 
 abstract class AbstractRule
 {

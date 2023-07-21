@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TheBachtiarz\Base\App\Interfaces;
+namespace TheBachtiarz\Base\App\Interfaces\Helpers;
 
 interface CarbonInterface
 {

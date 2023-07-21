@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\Config\Services;
 
+use Exception;
 use Illuminate\Support\Facades\Crypt;
+use TheBachtiarz\Base\App\Interfaces\Services\AbstractServiceInterface;
 use TheBachtiarz\Base\App\Services\AbstractService;
 use TheBachtiarz\Base\BaseConfigInterface;
 use TheBachtiarz\Base\Config\Interfaces\ConfigInterface;
@@ -21,7 +23,7 @@ use function json_encode;
 use function sprintf;
 use function tbbaseconfig;
 
-class ConfigService extends AbstractService
+class ConfigService extends AbstractService implements AbstractServiceInterface
 {
     /**
      * Constructor
@@ -70,6 +72,7 @@ class ConfigService extends AbstractService
             $errorMessage = $th->getMessage();
         }
 
+        DECODE_JSON:
         try {
             if (@json_decode(json: $result)) {
                 $result = json_decode(json: $result, associative: true);
@@ -87,55 +90,75 @@ class ConfigService extends AbstractService
      *
      * @param string|null $isEncrypt default: null | [ 1 => true, 2 => false ]
      */
-    public function createOrUpdate(string $path, mixed $value, string|null $isEncrypt = null): ConfigInterface
+    public function createOrUpdate(string $path, mixed $value, string|null $isEncrypt = null): array
     {
-        $actionMethod = 'create';
+        $config = new Config();
+        assert($config instanceof ConfigInterface);
 
         try {
             $config = $this->configRepository->getByPath($path);
-
-            $actionMethod = 'save';
         } catch (Throwable) {
-            $config = new Config();
-
             $config->setPath($path)->setIsEncrypt(false);
         }
 
-        if (gettype($value) === 'array') {
-            $value = json_encode($value);
-        }
-
-        if (@$isEncrypt) {
-            $encryptRequire = $isEncrypt === '1';
-
-            $config->setIsEncrypt($encryptRequire);
-
-            if ($encryptRequire) {
-                $value = Crypt::encrypt($value);
+        try {
+            if (gettype($value) === 'array') {
+                $value = json_encode($value);
             }
+
+            if (@$isEncrypt) {
+                $encryptRequire = $isEncrypt === '1';
+
+                $config->setIsEncrypt($encryptRequire);
+
+                if ($encryptRequire) {
+                    $value = Crypt::encrypt($value);
+                }
+            }
+
+            $config->setValue($value);
+
+            $create = $this->configRepository->createOrUpdate($config);
+            assert($create instanceof ConfigInterface);
+
+            $result = $create->simpleListMap();
+
+            $this->setResponseData(
+                message: sprintf('Successfully %s config', $config->getId() ? 'update' : 'create new'),
+                data: $result,
+                httpCode: 201,
+            );
+
+            return $this->serviceResult(status: true, message: '', data: $result);
+        } catch (Throwable $th) {
+            $this->log($th);
+            $this->setResponseData(message: $th->getMessage(), status: 'error', httpCode: 202);
+
+            return $this->serviceResult(message: $th->getMessage());
         }
-
-        $config->setValue($value);
-
-        $config = $this->configRepository->{$actionMethod}($config);
-
-        $this->setResponseData(
-            sprintf('Successfully %s config', $actionMethod === 'create' ? 'create new' : 'update'),
-            $config,
-        );
-
-        return $config;
     }
 
     /**
      * Delete config
      */
-    public function deleteConfig(string $path): bool
+    public function deleteConfig(string $path): array
     {
-        $config = $this->configRepository->getByPath($path);
-        assert($config instanceof Config);
+        try {
+            $process = $this->configRepository->deleteByPath($path);
 
-        return $config->delete();
+            if (! $process) {
+                throw new Exception('Failed to delete config');
+            }
+
+            $this->setResponseData(message: 'Successfully delete config', httpCode: 201);
+
+            return $this->serviceResult(status: true, message: 'Successfully delete config');
+        } catch (Throwable $th) {
+            $this->log($th);
+            $this->setResponseData(message: $th->getMessage(), httpCode: 202);
+
+            return $this->serviceResult(message: $th->getMessage());
+        }
     }
 
     /**

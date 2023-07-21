@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TheBachtiarz\Base\App\Helpers;
 
 use Illuminate\Support\Carbon;
-use TheBachtiarz\Base\App\Interfaces\CarbonInterface;
+use TheBachtiarz\Base\App\Interfaces\Helpers\CarbonInterface;
 
 use function array_keys;
 use function compact;
@@ -13,7 +13,7 @@ use function iconv_strlen;
 use function in_array;
 use function tbbaseconfig;
 
-class CarbonHelper extends Carbon
+class CarbonHelper extends Carbon implements CarbonInterface
 {
     /**
      * Split human date time type available
@@ -21,8 +21,8 @@ class CarbonHelper extends Carbon
      * @var array
      */
     public static array $splitHumanDateTimeType = [
-        'date' => CarbonInterface::CARBON_HUMAN_DATE_FORMAT,
-        'time' => CarbonInterface::CARBON_HUMAN_TIME_FORMAT,
+        'date' => self::CARBON_HUMAN_DATE_FORMAT,
+        'time' => self::CARBON_HUMAN_TIME_FORMAT,
     ];
 
     /**
@@ -31,8 +31,8 @@ class CarbonHelper extends Carbon
      * @var array
      */
     public static array $splitSystemDateTimeType = [
-        'date' => CarbonInterface::CARBON_DB_DATE_FORMAT,
-        'time' => CarbonInterface::CARBON_DB_TIME_FORMAT,
+        'date' => self::CARBON_DB_DATE_FORMAT,
+        'time' => self::CARBON_DB_TIME_FORMAT,
     ];
 
     /**
@@ -56,7 +56,7 @@ class CarbonHelper extends Carbon
     {
         return Carbon::parse($dateStart ?? Carbon::now())
             ->setTimezone(tbbaseconfig('app_timezone'))
-            ->isoFormat(CarbonInterface::CARBON_FULL_HUMAN_DATE_FORMAT);
+            ->isoFormat(self::CARBON_FULL_HUMAN_DATE_FORMAT);
     }
 
     /**
@@ -76,7 +76,7 @@ class CarbonHelper extends Carbon
      */
     public static function humanDateTime(Carbon|string|null $datetime = null, string $split = ''): string
     {
-        $format = CarbonInterface::CARBON_HUMAN_SIMPLE_DATE_FORMAT;
+        $format = self::CARBON_HUMAN_SIMPLE_DATE_FORMAT;
 
         if (in_array($split, array_keys(static::$splitHumanDateTimeType))) {
             $format = static::$splitHumanDateTimeType[$split];
@@ -92,7 +92,7 @@ class CarbonHelper extends Carbon
      */
     public static function dbDateTime(Carbon|string|null $datetime = null, string $split = ''): string
     {
-        $format = CarbonInterface::CARBON_DB_SIMPLE_DATE_FORMAT;
+        $format = self::CARBON_DB_SIMPLE_DATE_FORMAT;
 
         if (in_array($split, array_keys(static::$splitSystemDateTimeType))) {
             $format = static::$splitSystemDateTimeType[$split];
@@ -131,7 +131,7 @@ class CarbonHelper extends Carbon
     public static function dbTimestampToDateTime(string $timestamp = ''): string
     {
         return iconv_strlen($timestamp)
-            ? Carbon::createFromFormat('U', $timestamp)->format(CarbonInterface::CARBON_DB_SIMPLE_DATE_FORMAT)
+            ? Carbon::createFromFormat('U', $timestamp)->format(self::CARBON_DB_SIMPLE_DATE_FORMAT)
             : self::dbDateTime();
     }
 
@@ -314,7 +314,7 @@ class CarbonHelper extends Carbon
     {
         $born = Carbon::parse($datetime);
 
-        $date = $born->format(CarbonInterface::CARBON_HUMAN_DATE_FORMAT);
+        $date = $born->format(self::CARBON_HUMAN_DATE_FORMAT);
 
         $age = (string) $born->age;
 

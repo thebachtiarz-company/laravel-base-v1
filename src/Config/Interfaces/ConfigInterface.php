@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\Config\Interfaces;
 
-use TheBachtiarz\Base\App\Interfaces\Model\AbstractModelInterface;
+use TheBachtiarz\Base\App\Interfaces\Models\AbstractModelInterface;
 
 interface ConfigInterface extends AbstractModelInterface
 {

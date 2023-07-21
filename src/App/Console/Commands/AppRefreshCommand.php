@@ -127,7 +127,7 @@ class AppRefreshCommand extends Command
      */
     private function getStringableConfig(string $path): array|null
     {
-        $config = tbbaseconfig($path, false);
+        $config = tbbaseconfig(keyName: $path, useOrigin: false);
 
         try {
             $config = json_decode($config, true);

@@ -6,7 +6,7 @@ namespace TheBachtiarz\Base\App\Helpers;
 
 use Carbon\CarbonInterval;
 use Illuminate\Http\JsonResponse;
-use TheBachtiarz\Base\App\Interfaces\ResponseInterface;
+use TheBachtiarz\Base\App\Interfaces\Helpers\ResponseInterface;
 use TheBachtiarz\Base\App\Libraries\Paginator\PaginateResult;
 use TheBachtiarz\Base\App\Libraries\Paginator\Params\PaginateAttributes;
 use TheBachtiarz\Base\App\Libraries\Paginator\Params\PaginatorParam;
@@ -17,7 +17,7 @@ use function assert;
 use function count;
 use function mb_strlen;
 
-class ResponseHelper
+class ResponseHelper implements ResponseInterface
 {
     /**
      * Status response
@@ -57,13 +57,31 @@ class ResponseHelper
     // ? Public Modules
 
     /**
-     * Init response result
+     * Init response entity
      *
      * @return static
      */
     public static function init(): static
     {
         static::setExecuteStart();
+
+        return new static();
+    }
+
+    /**
+     * Reset response entity
+     *
+     * @return static
+     */
+    public static function end(): static
+    {
+        static::$status          = 'success';
+        static::$httpCode        = 200;
+        static::$executeStart    = null;
+        static::$executeFinish   = null;
+        static::$executeDuration = null;
+        static::$message         = '';
+        static::$data            = null;
 
         return new static();
     }
@@ -169,11 +187,11 @@ class ResponseHelper
     private static function createResult(): array
     {
         return [
-            ResponseInterface::ATTRIBUTE_STATUS => static::$status,
-            ResponseInterface::ATTRIBUTE_HTTPCODE => static::$httpCode,
-            ResponseInterface::ATTRIBUTE_MESSAGE => static::$message,
-            ResponseInterface::ATTRIBUTE_EXECUTETIME => static::getExecuteTime(),
-            ResponseInterface::ATTRIBUTE_DATA => static::getDataResolver(),
+            self::ATTRIBUTE_STATUS => static::$status,
+            self::ATTRIBUTE_HTTPCODE => static::$httpCode,
+            self::ATTRIBUTE_MESSAGE => static::$message,
+            self::ATTRIBUTE_EXECUTETIME => static::getExecuteTime(),
+            self::ATTRIBUTE_DATA => static::getDataResolver(),
         ];
     }
 
@@ -185,9 +203,9 @@ class ResponseHelper
     private static function getExecuteTime(): array
     {
         return [
-            ResponseInterface::ATTRIBUTE_EXECUTETIME_START => static::$executeStart,
-            ResponseInterface::ATTRIBUTE_EXECUTETIME_FINISH => static::$executeFinish ?? static::setExecuteFinish(CarbonHelper::anyConvDateToTimestamp())::$executeFinish,
-            ResponseInterface::ATTRIBUTE_EXECUTETIME_DURATION => static::getExecuteDuration(),
+            self::ATTRIBUTE_EXECUTETIME_START => static::$executeStart,
+            self::ATTRIBUTE_EXECUTETIME_FINISH => static::$executeFinish ?? static::setExecuteFinish(CarbonHelper::anyConvDateToTimestamp())::$executeFinish,
+            self::ATTRIBUTE_EXECUTETIME_DURATION => static::getExecuteDuration(),
         ];
     }
 

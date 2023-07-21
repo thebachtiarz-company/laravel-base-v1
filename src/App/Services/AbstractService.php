@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace TheBachtiarz\Base\App\Services;
 
 use TheBachtiarz\Base\App\Helpers\ResponseHelper;
+use TheBachtiarz\Base\App\Interfaces\Services\AbstractServiceInterface;
 use TheBachtiarz\Base\App\Libraries\Log\LogLibrary;
 
 use function app;
 use function compact;
+use function tbconfig;
 
-abstract class AbstractService
+abstract class AbstractService implements AbstractServiceInterface
 {
     /**
      * Set Response result
@@ -73,16 +75,23 @@ abstract class AbstractService
      *
      * @param string|null $channel Default: developer
      */
-    final protected function log(mixed $log, string|null $channel = 'developer'): void
+    final protected function log(mixed $log, string|null $channel = null): void
     {
         if (! $this->writeLog) {
             return;
         }
 
         /** @var LogLibrary @logLibrary */
-        $logLibrary = app()->make(LogLibrary::class);
+        $logLibrary = app(LogLibrary::class);
 
-        $logLibrary->log(logEntity: $log, channel: $channel);
+        $logLibrary->log(
+            logEntity: $log,
+            channel: $channel ?: match (tbconfig(configName: 'app', keyName: 'env')) {
+                'local' => 'developer',
+                'production' => 'production',
+                default => 'developer'
+            },
+        );
     }
 
     // ? Setter Modules

@@ -7,7 +7,7 @@ namespace TheBachtiarz\Base\App\Libraries\Curl;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http as CURL;
-use TheBachtiarz\Base\App\Interfaces\ResponseInterface;
+use TheBachtiarz\Base\App\Interfaces\Helpers\ResponseInterface;
 use TheBachtiarz\Base\App\Libraries\Curl\Data\CurlResponse;
 use TheBachtiarz\Base\App\Libraries\Curl\Data\CurlResponseInterface;
 use TheBachtiarz\Base\App\Libraries\Curl\Log\LogLibrary;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\App\Libraries\Curl\Data;
 
-use TheBachtiarz\Base\App\Interfaces\ResponseInterface;
+use TheBachtiarz\Base\App\Interfaces\Helpers\ResponseInterface;
 use Throwable;
 
 class CurlResponse implements CurlResponseInterface
