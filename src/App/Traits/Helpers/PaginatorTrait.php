@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TheBachtiarz\Base\App\Traits\Helper;
+namespace TheBachtiarz\Base\App\Traits\Helpers;
 
 use function ceil;
 use function count;

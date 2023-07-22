@@ -31,14 +31,16 @@ class ConfigRepository extends AbstractRepository implements AbstractRepositoryI
     /**
      * Get by path
      */
-    public function getByPath(string $path): ConfigInterface
+    public function getByPath(string $path): ConfigInterface|null
     {
         $path = Str::slug(title: $path, separator: '.');
 
-        $config = Config::getByPath($path)->first();
+        $this->modelBuilder(modelBuilder: Config::getByPath($path));
+
+        $config = $this->modelBuilder()->first();
         assert($config instanceof ConfigInterface || $config === null);
 
-        if (! $config) {
+        if (! $config && $this->throwIfNullEntity()) {
             throw new ModelNotFoundException("Config with path '$path' not found");
         }
 
@@ -51,6 +53,10 @@ class ConfigRepository extends AbstractRepository implements AbstractRepositoryI
     public function deleteByPath(string $path): bool
     {
         $config = $this->getByPath($path);
+
+        if (! $config) {
+            throw new ModelNotFoundException('Failed to delete config');
+        }
 
         return $this->deleteById($config->getId());
     }

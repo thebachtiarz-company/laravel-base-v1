@@ -6,7 +6,7 @@ namespace TheBachtiarz\Base\Config\Models;
 
 use TheBachtiarz\Base\App\Models\AbstractModel;
 use TheBachtiarz\Base\Config\Interfaces\ConfigInterface;
-use TheBachtiarz\Base\Config\Traits\Model\ConfigScopeTrait;
+use TheBachtiarz\Base\Config\Traits\Models\ConfigScopeTrait;
 
 class Config extends AbstractModel implements ConfigInterface
 {

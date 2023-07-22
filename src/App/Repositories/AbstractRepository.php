@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace TheBachtiarz\Base\App\Repositories;
 
 use Exception;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use TheBachtiarz\Base\App\Interfaces\Models\AbstractModelInterface;
 use TheBachtiarz\Base\App\Interfaces\Repositories\AbstractRepositoryInterface;
 use TheBachtiarz\Base\App\Libraries\Search\Output\SearchResultOutputInterface;
@@ -14,6 +16,7 @@ use TheBachtiarz\Base\App\Libraries\Search\Params\QuerySearchInputInterface;
 use TheBachtiarz\Base\App\Libraries\Search\QuerySearch;
 
 use function app;
+use function is_null;
 use function sprintf;
 
 abstract class AbstractRepository implements AbstractRepositoryInterface
@@ -29,11 +32,21 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
     protected QuerySearch $querySearch;
 
     /**
+     * Model builder
+     */
+    protected EloquentBuilder|QueryBuilder|null $modelBuilder = null;
+
+    /**
      * Model data
      *
      * @var array
      */
     protected array $modelData = [];
+
+    /**
+     * Throw if entity is null
+     */
+    protected bool $throwIfNullEntity = true;
 
     /**
      * Constructor
@@ -48,11 +61,11 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
     /**
      * Get entity by id
      */
-    public function getById(int $id): Model|AbstractModelInterface
+    public function getById(int $id): Model|AbstractModelInterface|null
     {
         $entity = $this->modelEntity::find($id);
 
-        if (! $entity) {
+        if (! $entity && $this->throwIfNullEntity()) {
             throw new ModelNotFoundException(sprintf(
                 $this->getByIdErrorMessage() ?? "Entity with id '%s' not found!",
                 $id,
@@ -103,11 +116,26 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
     /**
      * Delete by id
      */
-    public function deleteById(int $id): bool
+    public function deleteById(int $id): bool|null
     {
         $entity = $this->getById($id);
 
-        return $entity->delete();
+        return $entity?->delete();
+    }
+
+    /**
+     * Model builder
+     */
+    public function modelBuilder(
+        EloquentBuilder|QueryBuilder|null $modelBuilder = null,
+    ): static|EloquentBuilder|QueryBuilder|null {
+        if (! is_null($modelBuilder)) {
+            $this->modelBuilder = $modelBuilder;
+
+            return $this;
+        }
+
+        return $this->modelBuilder;
     }
 
     // ? Protected Methods
@@ -134,6 +162,22 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
         }
 
         return $this->modelData;
+    }
+
+    /**
+     * Throw if entity is null
+     *
+     * @return static|bool
+     */
+    protected function throwIfNullEntity(bool|null $throwable = null): static|bool
+    {
+        if (! is_null($throwable)) {
+            $this->throwIfNullEntity = $throwable;
+
+            return $this;
+        }
+
+        return $this->throwIfNullEntity;
     }
 
     /**
