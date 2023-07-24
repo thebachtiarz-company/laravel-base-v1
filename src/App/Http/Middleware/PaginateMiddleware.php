@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use TheBachtiarz\Base\App\Helpers\ResponseHelper;
-use TheBachtiarz\Base\App\Http\Requests\Rule\PaginateRule;
+use TheBachtiarz\Base\App\Http\Requests\Rules\PaginateRule;
 use TheBachtiarz\Base\App\Libraries\Paginator\Params\PaginatorParam;
 use Throwable;
 
