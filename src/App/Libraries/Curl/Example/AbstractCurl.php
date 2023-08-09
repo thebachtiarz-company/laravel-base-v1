@@ -6,13 +6,13 @@ namespace TheBachtiarz\Base\App\Libraries\Curl\Example;
 
 use TheBachtiarz\Base\App\Libraries\Curl\AbstractCurl as BaseAbstractCurl;
 
+use function sprintf;
+
 abstract class AbstractCurl extends BaseAbstractCurl
 {
     protected function urlDomainResolver(): string
     {
-        $subPaths = ['create-new-customer' => 'rest/api/v1/customer/create'];
-
-        $this->url = 'https://localhost.test/' . $subPaths[$this->path];
+        $this->url = sprintf('%s/%s', 'https://localhost.test', $this->getSubUrl());
 
         return $this->url;
     }

@@ -16,6 +16,6 @@ class CreateNewCustomer extends AbstractCurl implements CurlInterface
      */
     public function execute(array $data = []): CurlResponseInterface
     {
-        return $this->setBody($data)->post();
+        return $this->setSubUrl('rest/api/v1/customer/create')->setBody($data)->post();
     }
 }

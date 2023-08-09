@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\App\Libraries\Curl\Example;
 
+use TheBachtiarz\Base\App\Libraries\Curl\Data\CurlResponseInterface;
 use TheBachtiarz\Base\App\Services\AbstractService;
+
+use function assert;
 
 class SomeService extends AbstractService
 {
@@ -34,8 +37,13 @@ class SomeService extends AbstractService
         ];
 
         $createProcess = $this->curlCustomerLibrary->execute('create-new-customer', $newCustomerData);
+        assert($createProcess instanceof CurlResponseInterface);
 
-        $this->setResponseData($createProcess->getMessage(), $createProcess->getData());
+        $this->setResponseData(
+            message: $createProcess->getMessage(),
+            data: $createProcess->getData(),
+            httpCode: 201,
+        );
 
         return $createProcess->toArray();
     }

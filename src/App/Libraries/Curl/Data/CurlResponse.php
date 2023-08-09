@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace TheBachtiarz\Base\App\Libraries\Curl\Data;
 
 use TheBachtiarz\Base\App\Interfaces\Helpers\ResponseInterface;
-use Throwable;
 
 class CurlResponse implements CurlResponseInterface
 {
@@ -59,31 +58,45 @@ class CurlResponse implements CurlResponseInterface
 
     // ? Private Methods
 
+    // ? Getter Modules
 
+    /**
+     * Get http code
+     */
     public function getHttpCode(): int|null
     {
         return $this->httpCode;
     }
 
+    /**
+     * Get response status
+     */
     public function getStatus(): string
     {
         return $this->status;
     }
 
+    /**
+     * Get response message
+     */
     public function getMessage(): string
     {
         return $this->message;
     }
 
+    /**
+     * Get response data
+     */
     public function getData(string|null $attributekey = null): mixed
     {
-        try {
-            return $this->data[$attributekey];
-        } catch (Throwable) {
-            return $this->data;
-        }
+        return @$this->data[$attributekey] ?? $this->data;
     }
 
+    // ? Setter Modules
+
+    /**
+     * Set http code
+     */
     public function setHttpCode(int|null $code): self
     {
         $this->httpCode = $code;
@@ -91,6 +104,9 @@ class CurlResponse implements CurlResponseInterface
         return $this;
     }
 
+    /**
+     * Set response status
+     */
     public function setStatus(string $status): self
     {
         $this->status = $status;
@@ -98,6 +114,9 @@ class CurlResponse implements CurlResponseInterface
         return $this;
     }
 
+    /**
+     * Set response message
+     */
     public function setMessage(string $message): self
     {
         $this->message = $message;
@@ -105,6 +124,9 @@ class CurlResponse implements CurlResponseInterface
         return $this;
     }
 
+    /**
+     * Set response data
+     */
     public function setData(mixed $data): self
     {
         $this->data = $data;

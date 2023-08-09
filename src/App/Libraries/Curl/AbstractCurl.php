@@ -34,6 +34,11 @@ abstract class AbstractCurl implements CurlInterface
     protected string $url = '';
 
     /**
+     * Sub url request
+     */
+    protected string $subUrl = '';
+
+    /**
      * Header request
      *
      * @var array
@@ -206,6 +211,14 @@ abstract class AbstractCurl implements CurlInterface
     }
 
     /**
+     * Get sub url
+     */
+    public function getSubUrl(): string
+    {
+        return $this->subUrl;
+    }
+
+    /**
      * Get header request
      *
      * @return array
@@ -246,7 +259,7 @@ abstract class AbstractCurl implements CurlInterface
     /**
      * Set url path
      */
-    public function setPath(string $path): self
+    public function setPath(string $path): static
     {
         $this->path = $path;
 
@@ -256,9 +269,21 @@ abstract class AbstractCurl implements CurlInterface
     /**
      * Set url request
      */
-    public function setUrl(string $url): self
+    public function setUrl(string $url): static
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Set sub url
+     *
+     * @return self
+     */
+    public function setSubUrl(string $subUrl): static
+    {
+        $this->subUrl = $subUrl;
 
         return $this;
     }
@@ -268,7 +293,7 @@ abstract class AbstractCurl implements CurlInterface
      *
      * @param array $header
      */
-    public function setHeader(array $header): self
+    public function setHeader(array $header): static
     {
         $this->header = $header;
 
@@ -278,7 +303,7 @@ abstract class AbstractCurl implements CurlInterface
     /**
      * Set bearer token
      */
-    public function setToken(string|null $token): self
+    public function setToken(string|null $token): static
     {
         $this->token = $token;
 
@@ -288,7 +313,7 @@ abstract class AbstractCurl implements CurlInterface
     /**
      * Set user agent
      */
-    public function setUserAgent(string|null $userAgent): self
+    public function setUserAgent(string|null $userAgent): static
     {
         $this->userAgent = $userAgent;
 
@@ -300,7 +325,7 @@ abstract class AbstractCurl implements CurlInterface
      *
      * @param array $body
      */
-    public function setBody(array $body): self
+    public function setBody(array $body): static
     {
         $this->body = $body;
 
