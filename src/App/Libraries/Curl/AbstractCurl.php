@@ -151,7 +151,7 @@ abstract class AbstractCurl implements CurlInterface
      */
     private function response(Response $response): CurlResponseInterface
     {
-        $result = app(CurlResponse::class);
+        $result = new CurlResponse();
         assert($result instanceof CurlResponseInterface);
 
         try {
@@ -186,7 +186,7 @@ abstract class AbstractCurl implements CurlInterface
 
             $result->setMessage($th->getMessage());
         } finally {
-            $this->logInstance()->override()->log($result);
+            $this->logInstance()->override()->log($result->toArray());
 
             return $result;
         }
