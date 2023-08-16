@@ -186,7 +186,7 @@ abstract class AbstractCurl implements CurlInterface
 
             $result->setMessage($th->getMessage());
         } finally {
-            $this->logInstance()->override()->log($result->toArray());
+            $this->logInstance()->log(json_encode($result->toArray()), 'curl');
 
             return $result;
         }
