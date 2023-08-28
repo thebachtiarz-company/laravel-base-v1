@@ -18,9 +18,9 @@ use TheBachtiarz\Base\App\Http\Controllers\CheckController;
  */
 Route::prefix('base')->middleware('api')->controller(CheckController::class)->group(static function (): void {
     /**
-     * Name     : Bla bla bla.
-     * Method   : POST.
+     * Name     : Check.
+     * Method   : GET.
      * URL      : {{base_url}}/{{app_prefix}}/base/checks
      */
-    Route::post('checks', 'getCheck');
+    Route::get('checks', 'getCheck');
 });
