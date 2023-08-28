@@ -19,6 +19,7 @@ use function array_merge;
 use function assert;
 use function count;
 use function in_array;
+use function json_encode;
 use function throw_if;
 
 abstract class AbstractCurl implements CurlInterface

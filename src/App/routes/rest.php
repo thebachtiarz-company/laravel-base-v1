@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
+use TheBachtiarz\Base\App\Http\Controllers\CheckController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,14 +13,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 /**
- * Group    : dadada.
- * URI      : {{base_url}}/{{app_prefix}}/base/dadada/---
+ * Group    : base.
+ * URI      : {{base_url}}/{{app_prefix}}/base/---
  */
-Route::prefix('')->middleware('api')->controller()->group(static function (): void {
+Route::prefix('base')->middleware('api')->controller(CheckController::class)->group(static function (): void {
     /**
      * Name     : Bla bla bla.
      * Method   : POST.
-     * URL      : {{base_url}}/{{app_prefix}}/base/dadada/dididi
+     * URL      : {{base_url}}/{{app_prefix}}/base/checks
      */
-    Route::post('dididi', 'methodName');
+    Route::post('checks', 'getCheck');
 });

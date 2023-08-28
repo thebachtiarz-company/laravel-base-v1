@@ -14,20 +14,20 @@ use TheBachtiarz\Base\Config\Http\Controllers\ConfigController;
 
 /**
  * Group    : Config.
- * URI      : {{base_url}}/{{app_prefix}}/base/config/---
+ * URI      : {{base_url}}/{{app_prefix}}/config/---
  */
 Route::prefix('config')->middleware('api')->controller(ConfigController::class)->group(static function (): void {
     /**
      * Name     : Create or update config.
      * Method   : POST.
-     * URL      : {{base_url}}/{{app_prefix}}/base/config/create
+     * URL      : {{base_url}}/{{app_prefix}}/config/create
      */
     Route::post('create', 'create');
 
     /**
      * Name     : Delete config.
      * Method   : POST.
-     * URL      : {{base_url}}/{{app_prefix}}/base/config/delete
+     * URL      : {{base_url}}/{{app_prefix}}/config/delete
      */
     Route::post('delete', 'delete');
 });

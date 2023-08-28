@@ -129,6 +129,6 @@ if (! function_exists('tbbaserestapipath')) {
             'config' => 'Config',
         };
 
-        return base_path("vendor/thebachtiarz-company/laravel-auth-v2/src/$package/routes/rest.php");
+        return base_path("vendor/thebachtiarz-company/laravel-base-v1/src/$package/routes/rest.php");
     }
 }

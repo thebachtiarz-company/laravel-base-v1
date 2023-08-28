@@ -23,7 +23,7 @@ return [
     | Here your application url are stored.
     |
     */
-    'app_url' => '',
+    'app_url' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -34,14 +34,17 @@ return [
     | @see \DateTimeZone::listIdentifiers()
     |
     */
-    'app_timezone' => '',
+    'app_timezone' => null,
 
     /*
     |--------------------------------------------------------------------------
     | Application Key
     |--------------------------------------------------------------------------
     |
-    | Here your application key are stored.
+    | Here your application key are being stored.
+    | Do generate based from laravel default.
+    | Command 'artisan key:generate'.
+    | And then paste here.
     |
     */
     'app_key' => '',
@@ -80,16 +83,16 @@ return [
     */
     'app_refresh_artisan_commands_before' => [
         [
-            'command' => 'view:clear',
-            'message' => '======> Compiled views cleared!',
+            'command' => 'cache:clear',
+            'message' => '======> Application cache cleared!',
         ],
         [
             'command' => 'config:clear',
             'message' => '======> Configuration cache cleared!',
         ],
         [
-            'command' => 'cache:clear',
-            'message' => '======> Application cache cleared!',
+            'command' => 'view:clear',
+            'message' => '======> Compiled views cleared!',
         ],
     ],
 

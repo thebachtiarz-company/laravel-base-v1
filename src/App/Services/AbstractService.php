@@ -24,6 +24,10 @@ abstract class AbstractService implements AbstractServiceInterface
      */
     protected bool $writeLog = true;
 
+    // ? Public Methods
+
+    // ? Protected Methods
+
     /**
      * Call response helper
      */
@@ -93,6 +97,8 @@ abstract class AbstractService implements AbstractServiceInterface
             },
         );
     }
+
+    // ? Private Methods
 
     // ? Setter Modules
 
