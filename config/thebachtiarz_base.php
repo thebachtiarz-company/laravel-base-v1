@@ -13,7 +13,7 @@ return [
     | Here your application name are stored.
     |
     */
-    'app_name' => '',
+    'app_name' => 'Local Project',
 
     /*
     |--------------------------------------------------------------------------
@@ -23,7 +23,7 @@ return [
     | Here your application url are stored.
     |
     */
-    'app_url' => null,
+    'app_url' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     | @see \DateTimeZone::listIdentifiers()
     |
     */
-    'app_timezone' => null,
+    'app_timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------
