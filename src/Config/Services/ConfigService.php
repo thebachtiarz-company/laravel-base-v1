@@ -20,6 +20,7 @@ use function config;
 use function gettype;
 use function json_decode;
 use function json_encode;
+use function preg_replace;
 use function sprintf;
 use function tbbaseconfig;
 
@@ -94,6 +95,8 @@ class ConfigService extends AbstractService implements AbstractServiceInterface
     {
         $config = new Config();
         assert($config instanceof ConfigInterface);
+
+        $path = preg_replace(pattern: '/\s+/', replacement: '_', subject: $path);
 
         try {
             $config = $this->configRepository->getByPath($path);
@@ -173,25 +176,27 @@ class ConfigService extends AbstractService implements AbstractServiceInterface
         try {
             $configRegistered = tbbaseconfig(BaseConfigInterface::CONFIG_REGISTERED);
 
-            foreach ($configRegistered ?? [] as $key => $configRegisterName) {
-                foreach (array_keys(config($configRegisterName) ?? []) ?? [] as $key => $configPath) {
+            foreach ($configRegistered ?? [] as $key => $configModule) {
+                foreach (array_keys(config($configModule) ?? []) ?? [] as $key => $childName) {
                     $config = new Config();
                     assert($config instanceof ConfigInterface);
 
+                    $configFullPath = sprintf('%s.%s', $configModule, $childName);
+
                     try {
-                        $config = $this->configRepository->getByPath("$configRegisterName.$configPath");
+                        $config = $this->configRepository->getByPath($configFullPath);
                     } catch (Throwable) {
                     }
 
-                    $configValue = $this->getConfigValue("$configRegisterName.$configPath");
+                    $configValue = $this->getConfigValue($configFullPath);
 
                     if ($config->getId()) {
-                        config(["$configRegisterName.$configPath" => $configValue]);
+                        config([$configFullPath => $configValue]);
 
                         continue;
                     }
 
-                    $this->createOrUpdate(path: "$configRegisterName.$configPath", value: $configValue);
+                    $this->createOrUpdate(path: $configFullPath, value: $configValue);
                 }
             }
 

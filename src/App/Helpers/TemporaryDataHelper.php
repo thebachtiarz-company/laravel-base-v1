@@ -83,6 +83,20 @@ class TemporaryDataHelper
     }
 
     /**
+     * Delete temporary data by key
+     *
+     * @return static
+     */
+    public static function forget(string $key): static
+    {
+        static::init();
+
+        static::$temporaryData->forget($key);
+
+        return new static();
+    }
+
+    /**
      * Reset temporary data
      *
      * @return static

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace TheBachtiarz\Base\Config\Repositories;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Str;
 use TheBachtiarz\Base\App\Interfaces\Repositories\AbstractRepositoryInterface;
 use TheBachtiarz\Base\App\Repositories\AbstractRepository;
 use TheBachtiarz\Base\Config\Interfaces\ConfigInterface;
@@ -33,8 +32,6 @@ class ConfigRepository extends AbstractRepository implements AbstractRepositoryI
      */
     public function getByPath(string $path): ConfigInterface|null
     {
-        $path = Str::slug(title: $path, separator: '.');
-
         $this->modelBuilder(modelBuilder: Config::getByPath($path));
 
         $config = $this->modelBuilder()->first();
