@@ -170,7 +170,7 @@ class QuerySearchInput implements QuerySearchInputInterface
     /**
      * Set map method
      */
-    public function setMapMethod(string $mapMethod): self
+    public function setMapMethod(string|null $mapMethod = null): self
     {
         $this->mapMethod = $mapMethod;
 

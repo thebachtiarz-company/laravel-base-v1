@@ -42,11 +42,11 @@ class QuerySearch extends AbstractSearch implements QuerySearchInterface
                         continue;
                     }
 
-                    $whereConditions->push($whereCondition);
+                    $whereCondition = $whereConditions->push($whereCondition);
                 }
 
                 if ($whereConditions->count()) {
-                    $prepare = $prepare->where($whereConditions);
+                    $prepare = $prepare->where($whereConditions->toArray());
                 }
             }
 

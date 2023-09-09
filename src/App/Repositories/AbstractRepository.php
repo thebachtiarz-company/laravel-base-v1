@@ -81,6 +81,7 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
     public function search(QuerySearchInputInterface $querySearchInputInterface): SearchResultOutputInterface
     {
         $querySearchInputInterface->setModel($this->modelEntity);
+        $querySearchInputInterface->setMapMethod('simpleListMap');
 
         return $this->querySearch->execute($querySearchInputInterface);
     }
