@@ -26,7 +26,7 @@ class TemporaryDataHelper
     {
         static::init();
 
-        return @static::$temporaryData->get($attribute) ?? static::$temporaryData->toArray();
+        return @$attribute ? static::$temporaryData->get($attribute) : static::$temporaryData->toArray();
     }
 
     /**

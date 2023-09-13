@@ -139,6 +139,22 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
         return $this->modelBuilder;
     }
 
+    /**
+     * Throw if entity is null
+     *
+     * @return static|bool
+     */
+    public function throwIfNullEntity(bool|null $throwable = null): static|bool
+    {
+        if (! is_null($throwable)) {
+            $this->throwIfNullEntity = $throwable;
+
+            return $this;
+        }
+
+        return $this->throwIfNullEntity;
+    }
+
     // ? Protected Methods
 
     /**
@@ -163,22 +179,6 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
         }
 
         return $this->modelData;
-    }
-
-    /**
-     * Throw if entity is null
-     *
-     * @return static|bool
-     */
-    protected function throwIfNullEntity(bool|null $throwable = null): static|bool
-    {
-        if (! is_null($throwable)) {
-            $this->throwIfNullEntity = $throwable;
-
-            return $this;
-        }
-
-        return $this->throwIfNullEntity;
     }
 
     /**
