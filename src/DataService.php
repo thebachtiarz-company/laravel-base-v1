@@ -38,7 +38,7 @@ class DataService
         ];
 
         // ! Cache
-        $registerConfig[] = ['cache.default' => 'database'];
+        $registerConfig[] = ['cache.default' => tbbaseconfig(AppConfigInterface::CONFIG_CACHE_SYSTEM)];
 
         // ! Cors paths
         $paths            = config('cors.paths');

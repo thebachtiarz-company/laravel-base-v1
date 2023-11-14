@@ -64,6 +64,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Cache System
+    |--------------------------------------------------------------------------
+    |
+    | Here your can define cache system used in this application.
+    |
+    | ex: file | database
+    |
+    | Please use 'database' instead, for better experience.
+    |
+    */
+    'cache_system' => 'file',
+
+    /*
+    |--------------------------------------------------------------------------
     | Logger Mode Available
     |--------------------------------------------------------------------------
     |
