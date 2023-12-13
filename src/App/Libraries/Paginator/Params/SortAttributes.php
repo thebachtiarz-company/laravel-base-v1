@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TheBachtiarz\Base\App\Libraries\Paginator\Params;
 
+use Illuminate\Support\Str;
+
 use function mb_strlen;
 
 class SortAttributes
@@ -35,12 +37,8 @@ class SortAttributes
      */
     public function __construct(array $attributes = [])
     {
-        $this->setSortAttribute(@$attributes[self::ATTRIBUTE_SORTATTRIBUTE] ?? $this->sortAttribute);
-        $this->setSortType(
-            mb_strlen($this->sortAttribute)
-                ? @$attributes[self::ATTRIBUTE_SORTTYPE] ?? 'ASC'
-                : $this->sortType,
-        );
+        $this->setSortAttribute($this->sortAttributeSanitize(@$attributes[self::ATTRIBUTE_SORTATTRIBUTE]));
+        $this->setSortType($this->sortTypeSanitize(@$attributes[self::ATTRIBUTE_SORTTYPE]));
     }
 
     // ? Public Methods
@@ -61,6 +59,24 @@ class SortAttributes
     // ? Protected Methods
 
     // ? Private Methods
+
+    /**
+     * Sanitize input sort attribute
+     */
+    private function sortAttributeSanitize(string|null $input = null): string
+    {
+        return Str::slug(title: $input ?? $this->sortAttribute, separator: '_');
+    }
+
+    /**
+     * Sanitize input sort type
+     */
+    private function sortTypeSanitize(string|null $input = null): string
+    {
+        return mb_strlen($this->sortAttribute)
+            ? Str::slug(title: $input ?? 'ASC', separator: '_')
+            : $this->sortType;
+    }
 
     // ? Getter Modules
 
