@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBachtiarz\Base\App\Enums;
+
+use function array_column;
 
 /**
  * Data Enum Trait

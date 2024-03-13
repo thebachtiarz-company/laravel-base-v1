@@ -8,6 +8,10 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use TheBachtiarz\Base\App\Http\Requests\Rules\AbstractRule;
 
+use function array_map;
+use function array_merge;
+use function assert;
+
 abstract class AbstractRequest extends FormRequest
 {
     /**
@@ -66,7 +70,7 @@ abstract class AbstractRequest extends FormRequest
     {
         return array_merge(
             ...array_map(
-                callback: fn (AbstractRule $rule): array => $rule::rules(),
+                callback: static fn (AbstractRule $rule): array => $rule::rules(),
                 array: $this->getRules(),
             ),
         );
@@ -77,7 +81,7 @@ abstract class AbstractRequest extends FormRequest
     {
         return array_merge(
             ...array_map(
-                callback: fn (AbstractRule $rule): array => $rule::messages(),
+                callback: static fn (AbstractRule $rule): array => $rule::messages(),
                 array: $this->getRules(),
             ),
         );
@@ -94,15 +98,17 @@ abstract class AbstractRequest extends FormRequest
     /**
      * Set the value of defined rules
      *
-     * @param string[] $rules Each class must be inheritance from AbstractRule.
      * @see \TheBachtiarz\Base\App\Http\Requests\Rules\AbstractRule
+     *
+     * @param string[] $rules Each class must be inheritance from AbstractRule.
      */
     public function setRules(array $rules = []): self
     {
         $this->definedRules = array_map(
-            callback: function (string $rule) {
-                assert(new $rule instanceof AbstractRule);
-                return new $rule;
+            callback: static function (string $rule) {
+                assert(new $rule() instanceof AbstractRule);
+
+                return new $rule();
             },
             array: $rules,
         );
