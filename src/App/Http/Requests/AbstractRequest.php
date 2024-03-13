@@ -11,7 +11,14 @@ use TheBachtiarz\Base\App\Http\Requests\Rules\AbstractRule;
 abstract class AbstractRequest extends FormRequest
 {
     /**
-     * Define rules for proposed request
+     * Define rules
+     *
+     * @var string[]
+     */
+    protected array $rules = [];
+
+    /**
+     * Defined rules for proposed request
      *
      * @var AbstractRule[]
      */
@@ -29,7 +36,7 @@ abstract class AbstractRequest extends FormRequest
         array $server = [],
         $content = null,
     ) {
-        $this->_construct();
+        $this->setRules($this->rules);
 
         parent::__construct(
             query: $query,
@@ -40,13 +47,6 @@ abstract class AbstractRequest extends FormRequest
             server: $server,
             content: $content,
         );
-    }
-
-    /**
-     * Constructor modified
-     */
-    public function _construct()
-    {
     }
 
     /**
