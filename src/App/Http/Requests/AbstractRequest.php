@@ -6,9 +6,49 @@ namespace TheBachtiarz\Base\App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use TheBachtiarz\Base\App\Http\Requests\Rules\AbstractRule;
 
 abstract class AbstractRequest extends FormRequest
 {
+    /**
+     * Define rules
+     *
+     * @var string[]
+     */
+    protected array $rules = [];
+
+    /**
+     * Defined rules for proposed request
+     *
+     * @var AbstractRule[]
+     */
+    private array $definedRules = [];
+
+    /**
+     * Constructor
+     */
+    public function __construct(
+        array $query = [],
+        array $request = [],
+        array $attributes = [],
+        array $cookies = [],
+        array $files = [],
+        array $server = [],
+        $content = null,
+    ) {
+        $this->setRules($this->rules);
+
+        parent::__construct(
+            query: $query,
+            request: $request,
+            attributes: $attributes,
+            cookies: $cookies,
+            files: $files,
+            server: $server,
+            content: $content,
+        );
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -22,5 +62,51 @@ abstract class AbstractRequest extends FormRequest
      *
      * @return array<string, (ValidationRule|array|string)>
      */
-    abstract public function rules(): array;
+    public function rules(): array
+    {
+        return array_merge(
+            ...array_map(
+                callback: fn (AbstractRule $rule): array => $rule::rules(),
+                array: $this->getRules(),
+            ),
+        );
+    }
+
+    /** @inheritDoc */
+    public function messages()
+    {
+        return array_merge(
+            ...array_map(
+                callback: fn (AbstractRule $rule): array => $rule::messages(),
+                array: $this->getRules(),
+            ),
+        );
+    }
+
+    /**
+     * Get the value of defined rules
+     */
+    public function getRules(): array
+    {
+        return $this->definedRules;
+    }
+
+    /**
+     * Set the value of defined rules
+     *
+     * @param string[] $rules Each class must be inheritance from AbstractRule.
+     * @see \TheBachtiarz\Base\App\Http\Requests\Rules\AbstractRule
+     */
+    public function setRules(array $rules = []): self
+    {
+        $this->definedRules = array_map(
+            callback: function (string $rule) {
+                assert(new $rule instanceof AbstractRule);
+                return new $rule;
+            },
+            array: $rules,
+        );
+
+        return $this;
+    }
 }
